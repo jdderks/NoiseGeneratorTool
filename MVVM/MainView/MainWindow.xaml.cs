@@ -21,18 +21,39 @@ namespace MVVM.MainView
     /// </summary>
     public partial class MainWindow : Window
     {
+        MainWindowVM ViewModel => DataContext as MainWindowVM; // MyProperty { get; set; }
+        List<Layer> layers = new List<Layer>();
+
         public MainWindow()
         {
             InitializeComponent();
 
             //Wanneer je het viewmodel wilt assignen in de "code behind"; nu heb je geen intellisense:
             //DataContext = new MainWindowVM();
+
+            layers.Add(new Layer() {Name = "Een heel erg lange naam die niet helemaal in de lijst past"});
+            layers.Add(new Layer() {Name = "Naam"});
+            layers.Add(new Layer() {Name = "Naam"});
+            layers.Add(new Layer() {Name = "Naam"});
+            layers.Add(new Layer() {Name = "Naam"});
+            layers.Add(new Layer() {Name = "Naam"});
+            layers.Add(new Layer() {Name = "Naam"});
+            lbLayers.ItemsSource = layers;
         }
+
+        private void AddNewLayer()
+        {
+            layers.Add(new Layer() {Name = "New layer"});
+        }
+
 
         private void ConfigButton_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = DataContext as MainWindowVM;
-            viewModel.ConfigCommand.Execute(null);
+            ViewModel.ConfigCommand.Execute(null);
+        }
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.GenerateCommand.Execute(null);
         }
 
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -40,5 +61,8 @@ namespace MVVM.MainView
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
         }
+
+
+
     }
 }

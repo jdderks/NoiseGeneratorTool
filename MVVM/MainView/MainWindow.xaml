@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVM.MainView"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="Joris' noise generator tool" Height="450" Width="800" ResizeMode="NoResize">
+        Title="Joris' Texture Generator v0.21" Height="450" Width="872" ResizeMode="NoResize">
 
     <!--Wanneer je het viewmodel wilt assignen in xaml; nu heb je intellisense-->
     <Window.DataContext>
@@ -13,27 +14,28 @@
     </Window.DataContext>
 
 
+
     <!--Buiten grid-->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
         <!--Menubalk-->
         <Menu Grid.Row="0">
-            <MenuItem Header="Bestand">
+            <MenuItem Header="File">
                 <MenuItem Header="New"/>
                 <MenuItem Header="Open"/>
                 <MenuItem Header="Save"/>
-                <MenuItem Header="Save as .."/>
+                <MenuItem Header="Export" Command="{Binding ExportImageCommand}"/>
                 <Separator/>
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
             </MenuItem>
 
-            <MenuItem Header="Opties">
+            <MenuItem Header="Settings">
 
             </MenuItem>
         </Menu>
@@ -41,20 +43,61 @@
         <!--Binnengrid-->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="367"/>
+                <ColumnDefinition Width="175"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="193"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="1" Orientation="Vertical">
-                <Image Height="300" Width="300" Margin="10,10,10,10" Source="{Binding DisplayImage}" Cursor="Cross"/>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="20"/>
+
+                </Grid.RowDefinitions>
+                <TextBlock Text="Preview" Grid.Row="0"/>
+                <Image Height="300" Width="300" Grid.Row="1" Source="{Binding DisplayImage}"/>
+                <TextBlock Text="Automatically refresh preview" Grid.Row="2"/>
+            </Grid>
+
+            <Grid Grid.Column="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Layers" Grid.Row="0"/>
+
+                <ListBox Name="lbLayers" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="169"/>
+                                    <ColumnDefinition Width="10"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Name}" ToolTip="{Binding Name}"/>
+                                <Button Grid.Column="1" Content="-"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Button Content="Add new layer" Grid.Row="2"></Button>
+            </Grid>
+
+
+            <StackPanel Grid.Row="0" Orientation="Vertical" FlowDirection="LeftToRight" Grid.ColumnSpan="1">
+                <Label Content="Name:" Margin="0,10,0,0"></Label>
+                <Label Content="Seed:" Margin="0,10,0,0"></Label>
             </StackPanel>
-            
-            <TextBox HorizontalAlignment="Left" Text="{Binding Text}" TextWrapping="Wrap" VerticalAlignment="Top" Width="235" Height="27" Margin="165,10,0,0"/>
-            <Label Content="Name" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="27" Width="99"/>
-            <Label Content="Seed" HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top" Height="27" Width="99"/>
-            <TextBox MaxLength="10" PreviewTextInput="TextBox_PreviewTextInput" HorizontalAlignment="Left" Text="{Binding Seed}" TextWrapping="Wrap" VerticalAlignment="Top" Width="235" Height="27" Margin="165,42,0,0"/>
-            <Label Content="Randomize" HorizontalAlignment="Left" Margin="10,74,0,0" VerticalAlignment="Top" Height="27" Width="140"/>
-            <CheckBox Margin="384,81,0,230" PreviewTextInput="TextBox_PreviewTextInput" HorizontalAlignment="Left" Width="16"></CheckBox>
+
+            <StackPanel Grid.Row="0" Orientation="Vertical" FlowDirection="LeftToRight" Grid.ColumnSpan="2">
+                <TextBlock Text="Workspace" FontStyle="Normal"/>
+                <TextBox HorizontalAlignment="Left" Text="{Binding Text}" TextWrapping="Wrap" Width="189" Height="27" Margin="165,10,0,0"/>
+                <TextBox MaxLength="10" PreviewTextInput="TextBox_PreviewTextInput" HorizontalAlignment="Left" Text="{Binding Seed}" TextWrapping="Wrap" Width="189" Height="27" Margin="165,10,0,0"/>
+            </StackPanel>
         </Grid>
 
         <!--Knoppenbalk -->
@@ -63,10 +106,9 @@
             <Button Width="80" Height="24" Margin="20,0,0,0" Content="Exit" Command="{Binding ExitCommand}"/>
             <Button Width="80" Height="24" Margin="20,0,0,0" Content="Config" Click="ConfigButton_Click"/>
             <Button Width="80" Height="24" Margin="20,0,0,0" Content="Generate" Command="{Binding GenerateCommand}"/>
-            <ComboBox Width="140" Height="24" Margin="20,0,0,0">
-                <ComboBoxItem  IsSelected="True">White Noise</ComboBoxItem>
-                <ComboBoxItem>Smooth White Noise</ComboBoxItem>
-            </ComboBox>
+
+            <ComboBox Width="140" Height="24" Margin="20,0,0,0" ItemsSource="{Binding AvailableGenerationModes}" SelectedIndex="{Binding SelectedGenerationMode}" SelectionChanged="ComboBox_SelectionChanged" />
+
         </StackPanel>
 
         <!--Status bar-->

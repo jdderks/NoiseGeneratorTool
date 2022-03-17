@@ -3,19 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Drawing;
+using System.Drawing.Imaging;
+using Microsoft.Win32;
 
 namespace MVVM.MainView
 {
-    enum GenerationMode
+    enum GenerationModes
     {
         WhiteNoise = 0,
-        SmoothNoise = 1
+        SmoothedNoise = 1,
+        PerlinNoise = 2
     }
 
 
@@ -27,9 +32,28 @@ namespace MVVM.MainView
         private byte[,,] pixels;
         float[][] bitmap;
         private int resolution = 512;
-        private bool randomizeSeedOnGenerate = false;
+        private int _selectedGenerationMode;
 
-        public GenerationMode mode = GenerationMode.WhiteNoise;
+        static MainWindowVM()
+        {
+            AvailableGenerationModes = new List<string>(Enum.GetNames(typeof(GenerationModes)));
+        }
+
+        public static List<string> AvailableGenerationModes { get; }
+
+
+        public int SelectedGenerationMode
+        {
+            get { return _selectedGenerationMode; }
+            set
+            {
+                _selectedGenerationMode = value;
+                OnPropertyChanged(nameof(SelectedGenerationMode));
+            }
+        }
+
+
+        public GenerationModes mode { get; } = GenerationModes.WhiteNoise;
 
         public string Seed
         {
@@ -66,6 +90,8 @@ namespace MVVM.MainView
 
         public ICommand GenerateCommand { get; }
 
+        public ICommand ExportImageCommand { get; }
+
         public MainWindowVM()
         {
             Seed = "0123456789";
@@ -79,6 +105,7 @@ namespace MVVM.MainView
             ExitCommand = new Command(ExitAction);
             ConfigCommand = new Command(ConfigAction);
             GenerateCommand = new Command(GenerateAction);
+            ExportImageCommand = new Command(ExportAction);
         }
 
         private void SetModeAction()
@@ -88,6 +115,7 @@ namespace MVVM.MainView
 
         private void ConfigAction()
         {
+
         }
 
         private void ExitAction()
@@ -97,12 +125,12 @@ namespace MVVM.MainView
 
         private void GenerateAction()
         {
-            switch (mode)
+            switch ((GenerationModes)SelectedGenerationMode)
             {
-                case GenerationMode.WhiteNoise:
+                case GenerationModes.WhiteNoise:
                     GenerateWhiteNoise();
                     break;
-                case GenerationMode.SmoothNoise:
+                case GenerationModes.SmoothedNoise:
                     GenerateWhiteNoise();
                     GenerateSmoothWhiteNoise();
                     break;
@@ -111,10 +139,57 @@ namespace MVVM.MainView
             }
         }
 
+        private void ExportAction()
+        {
+            SaveImage();
+        }
+
+        private void SaveImage()
+        {
+            try
+            {
+                var saveFileDialog = new SaveFileDialog()
+                {
+                    Filter = "Image Files ( *.png, *.bmp, *.jpg)|*.png;*.bmp;*.jpg"
+                };
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    var encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create((BitmapSource)ConvertWriteableBitmapToBitmapImage(DisplayImage)));
+                    using (FileStream stream = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                    {
+                        encoder.Save(stream);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+
+                MessageBox.Show(exception.Message);
+            }
+        }
+
+        public BitmapImage ConvertWriteableBitmapToBitmapImage(WriteableBitmap wbm)
+        {
+            //From https://stackoverflow.com/questions/14161665/how-do-i-convert-a-writeablebitmap-object-to-a-bitmapimage-object-in-wpf
+            BitmapImage bmImage = new BitmapImage();
+            using (MemoryStream stream = new MemoryStream())
+            {
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(wbm));
+                encoder.Save(stream);
+                bmImage.BeginInit();
+                bmImage.CacheOption = BitmapCacheOption.OnLoad;
+                bmImage.StreamSource = stream;
+                bmImage.EndInit();
+                bmImage.Freeze();
+            }
+            return bmImage;
+        }
+
         private void GenerateWhiteNoise()
         {
             bitmap = Perlin.Noise.GenerateWhiteNoise(resolution, resolution, Seed);
-
 
             for (int x = 0; x < resolution; x++)
             {
@@ -153,7 +228,6 @@ namespace MVVM.MainView
                     }
                 }
             }
-
             UpdateImageRect();
         }
 
