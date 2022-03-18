@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -24,6 +25,8 @@ namespace MVVM.MainView
         MainWindowVM ViewModel => DataContext as MainWindowVM; // MyProperty { get; set; }
         List<Layer> layers = new List<Layer>();
 
+        ObservableCollection<Layer> observableLayers = new ObservableCollection<Layer>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -31,25 +34,20 @@ namespace MVVM.MainView
             //Wanneer je het viewmodel wilt assignen in de "code behind"; nu heb je geen intellisense:
             //DataContext = new MainWindowVM();
 
-            layers.Add(new Layer() {Name = "Een heel erg lange naam die niet helemaal in de lijst past"});
-            layers.Add(new Layer() {Name = "Naam"});
-            layers.Add(new Layer() {Name = "Naam"});
-            layers.Add(new Layer() {Name = "Naam"});
-            layers.Add(new Layer() {Name = "Naam"});
-            layers.Add(new Layer() {Name = "Naam"});
-            layers.Add(new Layer() {Name = "Naam"});
-            lbLayers.ItemsSource = layers;
+            //layers.Add(new Layer() {Name = "Een heel erg lange naam die niet helemaal in de lijst past"});
+            //layers.Add(new Layer() {Name = "Naam"});
+            //layers.Add(new Layer() {Name = "Naam"});
+
+            observableLayers.Add(new Layer() {Name = "Een heel erg lange naam die niet helemaal in de lijst past" });
+            observableLayers.Add(new Layer() {Name = "Nieuwe layer" });
+            lbLayers.ItemsSource = observableLayers;
         }
 
-        private void AddNewLayer()
-        {
-            layers.Add(new Layer() {Name = "New layer"});
-        }
+        //private void AddNewLayer()
+        //{
+        //    layers.Add(new Layer() {Name = "New layer"});
+        //}
 
-        private void ConfigButton_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.ConfigCommand.Execute(null);
-        }
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ViewModel.GenerateCommand.Execute(null);
@@ -61,5 +59,11 @@ namespace MVVM.MainView
             e.Handled = regex.IsMatch(e.Text);
         }
 
+        private void AddnewLayer(object sender, RoutedEventArgs e)
+        {
+            Layer newLayer = new Layer() {Name = "New layer" };
+            observableLayers.Add(newLayer);
+            lbLayers.ItemsSource = observableLayers;
+        }
     }
 }

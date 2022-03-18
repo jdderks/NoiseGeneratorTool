@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MVVM.MainView"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="Joris' Texture Builder v0.22" Height="450" Width="872" ResizeMode="CanResize">
+        Title="JTB v0.23" Height="450" Width="872" ResizeMode="CanResize">
 
     <!--Wanneer je het viewmodel wilt assignen in xaml; nu heb je intellisense-->
     <Window.DataContext>
@@ -64,7 +64,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Label Content="Name:" Margin="0,0,0,0" Grid.Column="0"/>
-                        <TextBox HorizontalAlignment="Left" Text="{Binding Text}" TextWrapping="Wrap" Grid.Column="1" Width="200"/>
+                        <TextBox HorizontalAlignment="Left" Text="{Binding Text}" TextWrapping="Wrap" Grid.Column="1" Width="200" VerticalAlignment="Center"/>
 
                     </Grid>
                     <Grid Grid.Row="2">
@@ -73,7 +73,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Label Content="Type:" Grid.Column="0"/>
-                        <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableGenerationModes}" SelectedIndex="{Binding SelectedGenerationMode}" SelectionChanged="ComboBox_SelectionChanged" />
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableGenerationModes}" SelectedIndex="{Binding SelectedGenerationMode}" SelectionChanged="ComboBox_SelectionChanged" VerticalAlignment="Center" />
 
                         <!--<TextBox Text="{Binding Seed}" Grid.Column="1"  MaxLength="9" PreviewTextInput="TextBox_PreviewTextInput" HorizontalAlignment="Left"  TextWrapping="Wrap" Width="200" />-->
 
@@ -92,7 +92,7 @@
 
                     </Grid.RowDefinitions>
                     <TextBlock Text="Preview" Grid.Row="0" Background="#E3E3E3"/>
-                    <Image Grid.Row="1" Source="{Binding DisplayImage}" />
+                    <Image Grid.Row="1" Source="{Binding DisplayImage}" Cursor="Cross" />
                     <Grid Margin="0,0,0,5" Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="20"/>
@@ -132,7 +132,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Button Content="Add new layer" Grid.Row="2"></Button>
+                    <Button Content="Add new layer" Grid.Row="2" Click="AddnewLayer"></Button>
                 </Grid>
             </Border>
 

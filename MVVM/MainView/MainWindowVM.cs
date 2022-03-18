@@ -86,7 +86,6 @@ namespace MVVM.MainView
         }
 
         public ICommand ExitCommand { get; }
-        public ICommand ConfigCommand { get; }
         public ICommand GenerateCommand { get; }
         public ICommand ExportImageCommand { get; }
 
@@ -101,7 +100,6 @@ namespace MVVM.MainView
             GenerateWhiteNoise();
 
             ExitCommand = new Command(ExitAction);
-            ConfigCommand = new Command(ConfigAction);
             GenerateCommand = new Command(GenerateAction);
             ExportImageCommand = new Command(ExportAction);
         }
