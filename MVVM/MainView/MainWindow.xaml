@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MVVM.MainView"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="Joris' Texture Generator v0.21" Height="450" Width="872" ResizeMode="NoResize">
+        Title="Joris' Texture Builder v0.22" Height="450" Width="872" ResizeMode="CanResize">
 
     <!--Wanneer je het viewmodel wilt assignen in xaml; nu heb je intellisense-->
     <Window.DataContext>
@@ -43,24 +43,68 @@
         <!--Binnengrid-->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="175"/>
-                <ColumnDefinition/>
                 <ColumnDefinition Width="300"/>
-                <ColumnDefinition Width="193"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="2">
+            <!--Workspace-->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Workspace" FontStyle="Normal" Grid.Row="0"/>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Name:" Margin="0,0,0,0" Grid.Column="0"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Text}" TextWrapping="Wrap" Grid.Column="1" Width="200"/>
+
+                </Grid>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Type:" Grid.Column="0"/>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableGenerationModes}" SelectedIndex="{Binding SelectedGenerationMode}" SelectionChanged="ComboBox_SelectionChanged" />
+
+                    <!--<TextBox Text="{Binding Seed}" Grid.Column="1"  MaxLength="9" PreviewTextInput="TextBox_PreviewTextInput" HorizontalAlignment="Left"  TextWrapping="Wrap" Width="200" />-->
+
+
+                </Grid>
+            </Grid>
+
+            <!--Preview-->
+            <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="20"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="30"/>
 
                 </Grid.RowDefinitions>
                 <TextBlock Text="Preview" Grid.Row="0"/>
-                <Image Height="300" Width="300" Grid.Row="1" Source="{Binding DisplayImage}"/>
-                <TextBlock Text="Automatically refresh preview" Grid.Row="2"/>
+                <Image Grid.Row="1" Source="{Binding DisplayImage}" />
+                <Grid Margin="0,0,0,5" Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Auto refresh" Grid.Column="1"/>
+                    <CheckBox Grid.Column="0"/>
+                    <Button Width="80"  Content="Refresh" Command="{Binding GenerateCommand}" Grid.Column="2"/>
+                </Grid>
+
             </Grid>
 
+            <!--Layers-->
             <Grid Grid.Column="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="20"/>
@@ -69,7 +113,6 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="Layers" Grid.Row="0"/>
-
                 <ListBox Name="lbLayers" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Row="1">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -88,27 +131,13 @@
             </Grid>
 
 
-            <StackPanel Grid.Row="0" Orientation="Vertical" FlowDirection="LeftToRight" Grid.ColumnSpan="1">
-                <Label Content="Name:" Margin="0,10,0,0"></Label>
-                <Label Content="Seed:" Margin="0,10,0,0"></Label>
-            </StackPanel>
 
-            <StackPanel Grid.Row="0" Orientation="Vertical" FlowDirection="LeftToRight" Grid.ColumnSpan="2">
-                <TextBlock Text="Workspace" FontStyle="Normal"/>
-                <TextBox HorizontalAlignment="Left" Text="{Binding Text}" TextWrapping="Wrap" Width="189" Height="27" Margin="165,10,0,0"/>
-                <TextBox MaxLength="10" PreviewTextInput="TextBox_PreviewTextInput" HorizontalAlignment="Left" Text="{Binding Seed}" TextWrapping="Wrap" Width="189" Height="27" Margin="165,10,0,0"/>
-            </StackPanel>
         </Grid>
 
         <!--Knoppenbalk -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft">
 
-            <Button Width="80" Height="24" Margin="20,0,0,0" Content="Exit" Command="{Binding ExitCommand}"/>
-            <Button Width="80" Height="24" Margin="20,0,0,0" Content="Config" Click="ConfigButton_Click"/>
-            <Button Width="80" Height="24" Margin="20,0,0,0" Content="Generate" Command="{Binding GenerateCommand}"/>
-
-            <ComboBox Width="140" Height="24" Margin="20,0,0,0" ItemsSource="{Binding AvailableGenerationModes}" SelectedIndex="{Binding SelectedGenerationMode}" SelectionChanged="ComboBox_SelectionChanged" />
-
+            
         </StackPanel>
 
         <!--Status bar-->

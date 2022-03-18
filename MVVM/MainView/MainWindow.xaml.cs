@@ -46,7 +46,6 @@ namespace MVVM.MainView
             layers.Add(new Layer() {Name = "New layer"});
         }
 
-
         private void ConfigButton_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.ConfigCommand.Execute(null);
@@ -61,8 +60,6 @@ namespace MVVM.MainView
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
         }
-
-
 
     }
 }
