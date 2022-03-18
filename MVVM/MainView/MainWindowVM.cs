@@ -87,15 +87,13 @@ namespace MVVM.MainView
 
         public ICommand ExitCommand { get; }
         public ICommand ConfigCommand { get; }
-
         public ICommand GenerateCommand { get; }
-
         public ICommand ExportImageCommand { get; }
 
         public MainWindowVM()
         {
             Seed = "0123456789";
-            Text = "New file";
+            Text = "New layer";
             DisplayImage = new WriteableBitmap(
             resolution, resolution, 96, 96, PixelFormats.Bgra32, null);
             pixels = new byte[resolution, resolution, 4];

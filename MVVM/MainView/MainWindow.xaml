@@ -49,87 +49,92 @@
             </Grid.ColumnDefinitions>
 
             <!--Workspace-->
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="Workspace" FontStyle="Normal" Grid.Row="0"/>
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Content="Name:" Margin="0,0,0,0" Grid.Column="0"/>
-                    <TextBox HorizontalAlignment="Left" Text="{Binding Text}" TextWrapping="Wrap" Grid.Column="1" Width="200"/>
+            <Border BorderBrush="#CCC" BorderThickness="2" Grid.Column="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Workspace" FontStyle="Normal" Grid.Row="0" Background="#E3E3E3"/>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Name:" Margin="0,0,0,0" Grid.Column="0"/>
+                        <TextBox HorizontalAlignment="Left" Text="{Binding Text}" TextWrapping="Wrap" Grid.Column="1" Width="200"/>
 
+                    </Grid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Type:" Grid.Column="0"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableGenerationModes}" SelectedIndex="{Binding SelectedGenerationMode}" SelectionChanged="ComboBox_SelectionChanged" />
+
+                        <!--<TextBox Text="{Binding Seed}" Grid.Column="1"  MaxLength="9" PreviewTextInput="TextBox_PreviewTextInput" HorizontalAlignment="Left"  TextWrapping="Wrap" Width="200" />-->
+
+
+                    </Grid>
                 </Grid>
-                <Grid Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Content="Type:" Grid.Column="0"/>
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableGenerationModes}" SelectedIndex="{Binding SelectedGenerationMode}" SelectionChanged="ComboBox_SelectionChanged" />
-
-                    <!--<TextBox Text="{Binding Seed}" Grid.Column="1"  MaxLength="9" PreviewTextInput="TextBox_PreviewTextInput" HorizontalAlignment="Left"  TextWrapping="Wrap" Width="200" />-->
-
-
-                </Grid>
-            </Grid>
+            </Border>
 
             <!--Preview-->
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="30"/>
+            <Border BorderBrush="#CCC" BorderThickness="1" Grid.Column="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="30"/>
 
-                </Grid.RowDefinitions>
-                <TextBlock Text="Preview" Grid.Row="0"/>
-                <Image Grid.Row="1" Source="{Binding DisplayImage}" />
-                <Grid Margin="0,0,0,5" Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="100"/>
-                    </Grid.ColumnDefinitions>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Preview" Grid.Row="0" Background="#E3E3E3"/>
+                    <Image Grid.Row="1" Source="{Binding DisplayImage}" />
+                    <Grid Margin="0,0,0,5" Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Auto refresh" Grid.Column="1"/>
-                    <CheckBox Grid.Column="0"/>
-                    <Button Width="80"  Content="Refresh" Command="{Binding GenerateCommand}" Grid.Column="2"/>
+                        <TextBlock Text="Auto refresh" Grid.Column="1"/>
+                        <CheckBox Grid.Column="0"/>
+                        <Button Width="80"  Content="Refresh" Command="{Binding GenerateCommand}" Grid.Column="2"/>
+                    </Grid>
                 </Grid>
-
-            </Grid>
+            </Border>
 
             <!--Layers-->
-            <Grid Grid.Column="3">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="20"/>
-                </Grid.RowDefinitions>
 
-                <TextBlock Text="Layers" Grid.Row="0"/>
-                <ListBox Name="lbLayers" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Row="1">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,0,0,5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="169"/>
-                                    <ColumnDefinition Width="10"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding Name}" ToolTip="{Binding Name}"/>
-                                <Button Grid.Column="1" Content="-"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <Button Content="Add new layer" Grid.Row="2"></Button>
-            </Grid>
+            <Border BorderBrush="#CCC" BorderThickness="2" Grid.Column="2">
+                <Grid Grid.Column="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
 
+                    <TextBlock Text="Layers" Grid.Row="0" Background="#E3E3E3"/>
+                    <ListBox Name="lbLayers" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="169"/>
+                                        <ColumnDefinition Width="10"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Name}" ToolTip="{Binding Name}"/>
+                                    <Button Grid.Column="1" Content="-"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button Content="Add new layer" Grid.Row="2"></Button>
+                </Grid>
+            </Border>
 
 
         </Grid>
@@ -137,7 +142,7 @@
         <!--Knoppenbalk -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft">
 
-            
+
         </StackPanel>
 
         <!--Status bar-->
