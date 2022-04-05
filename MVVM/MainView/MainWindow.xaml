@@ -7,53 +7,49 @@
         xmlns:uc="clr-namespace:MVVM.UserControls"
         xmlns:models="clr-namespace:MVVM.Models"
         xmlns:dts="clr-namespace:MVVM.DataTemplateSelectors"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="Hoofdvenster" Height="450" Width="800">
+        Title="JTB v0.23" Height="450" Width="872" MinHeight="400" MinWidth="700" ResizeMode="CanResize">
 
-    <!--Wanneer je het viewmodel wilt assignen in xaml, dan doe je dat hier; nu heb je intellisense!-->
+    <!--Assign viewmodel-->
     <Window.DataContext>
         <local:MainWindowVM/>
     </Window.DataContext>
 
     <Window.Resources>
-        <DataTemplate x:Key="subItem1DataTemplate" DataType="{x:Type models:SubItem1VM}">
-            <uc:SubItem1UC/>
+        <DataTemplate x:Key="layerDataTemplate" DataType="{x:Type models:LayerVM}">
+            <uc:LayerUC/>
         </DataTemplate>
 
-        <DataTemplate x:Key="subItem2DataTemplate" DataType="{x:Type models:SubItem2VM}">
-            <uc:SubItem2UC/>
+        <DataTemplate x:Key="smoothLayerDataTemplate" DataType="{x:Type models:SmoothNoiseLayerVM}">
+            <uc:SmoothNoiseLayerUC/>
         </DataTemplate>
 
-        <DataTemplate x:Key="itemDataTemplate" DataType="{x:Type models:ItemVM}">
-            <uc:ItemUC/>
-        </DataTemplate>
-
-        <!--Data template selector to select from the above-->
-        <dts:ItemDataTemplateSelector x:Key="itemDataTemplateSelector"/>
-
+        <dts:LayerDataTemplateSelector x:Key="layerDataTemplateSelector"/>
     </Window.Resources>
-    
+
+
     <!--Buiten grid-->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
         <!--Menubalk-->
         <Menu Grid.Row="0">
-            <MenuItem Header="Bestand">
+            <MenuItem Header="File">
                 <MenuItem Header="New"/>
                 <MenuItem Header="Open"/>
                 <MenuItem Header="Save"/>
-                <MenuItem Header="Save as .."/>
+                <MenuItem Header="Export" Command="{Binding ExportImageCommand}"/>
                 <Separator/>
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
             </MenuItem>
 
-            <MenuItem Header="Opties">
+            <MenuItem Header="Settings">
 
             </MenuItem>
         </Menu>
@@ -61,32 +57,110 @@
         <!--Binnengrid-->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="300"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel>
-                <Label>Geselecteerd:</Label>
-                <ContentControl Content="{Binding SelectedItem}" ContentTemplateSelector="{StaticResource itemDataTemplateSelector}"/>
-            </StackPanel>
+            <!--Workspace-->
+            <Border BorderBrush="#CCC" BorderThickness="2" Grid.Column="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="Workspace" FontStyle="Normal" Background="#E3E3E3"/>
+                    <ContentControl Grid.Row="1" Content="{Binding SelectedLayer}" ContentTemplateSelector="{StaticResource layerDataTemplateSelector}"/>
 
-            <ListView Grid.Column="2" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                    <!--<Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Name:" Margin="0,0,0,0" Grid.Column="0"/>
+                        <TextBox HorizontalAlignment="Left" Text="{Binding Text}" TextWrapping="Wrap" Grid.Column="1" Width="200" VerticalAlignment="Center"/>
+
+                    </Grid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Type:" Grid.Column="0"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableGenerationModes}" SelectedIndex="{Binding SelectedGenerationMode}" SelectionChanged="ComboBox_SelectionChanged" VerticalAlignment="Center" />
+
+                        -->
+                    <!--<TextBox Text="{Binding Seed}" Grid.Column="1"  MaxLength="8" PreviewTextInput="TextBox_PreviewTextInput" HorizontalAlignment="Left"  TextWrapping="Wrap" Width="200" />-->
+                    <!--
+
+
+                    </Grid>-->
+                </Grid>
+            </Border>
+
+            <!--Preview-->
+            <Border BorderBrush="#CCC" BorderThickness="1" Grid.Column="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="30"/>
+
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Preview" Grid.Row="0" Background="#E3E3E3"/>
+                    <Image Grid.Row="1" Source="{Binding DisplayImage}" Cursor="Cross" />
+                    <Grid Margin="0,0,0,5" Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="Auto refresh" Grid.Column="1"/>
+                        <CheckBox Grid.Column="0"/>
+                        <Button Width="80"  Content="Refresh" Command="{Binding GenerateCommand}" Grid.Column="2"/>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!--Layers-->
+
+            <Border BorderBrush="#CCC" BorderThickness="2" Grid.Column="2">
+                <Grid Grid.Column="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Layers" Grid.Row="0" Background="#E3E3E3"/>
+                    <!--make lblayers a binding-->
+                    <ListBox ItemsSource="{Binding Layers}" SelectedItem="{Binding SelectedLayer}" HorizontalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="169"/>
+                                        <ColumnDefinition Width="10"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Name}" ToolTip="{Binding Name}"/>
+                                    <Button Grid.Column="1" Content="-" Command="{Binding RemoveLayerCommand}" CommandParameter=""/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button Content="Add new layer" Grid.Row="2" Command="{Binding AddNewLayerCommand}"></Button>
+                </Grid>
+            </Border>
+
 
         </Grid>
 
         <!--Knoppenbalk -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft">
-            <Button Width="80" Height="24" Margin="20,0,0,0" Content="Exit" Command="{Binding ExitCommand}"/>
-            <Button Width="80" Height="24" Margin="20,0,0,0" Content="Parallel" Command="{Binding StartTaskParallelForEachCommand}"/>
-            <Button Width="80" Height="24" Margin="20,0,0,0" Content="Background" Command="{Binding StartBackgroundWorkerCommand}"/>
-            <Button Width="80" Height="24" Margin="20,0,0,0" Content="Config" Click="ConfigButton_Click"/>
+
+
         </StackPanel>
 
         <!--Status bar-->

@@ -1,4 +1,8 @@
-﻿using System;
+﻿/// Command class and MVVM structure by David Anderson
+/// Tutorial link: https://www.youtube.com/watch?v=EpGvqVtSYjs
+
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
