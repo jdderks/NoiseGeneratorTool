@@ -4,14 +4,6 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>jtbfavicon.ico</ApplicationIcon>
-    <Authors>Joris Derks</Authors>
-    <Product>JTB</Product>
-    <Description>An advanced texture building tool</Description>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="imgs\" />
-  </ItemGroup>
 
 </Project>

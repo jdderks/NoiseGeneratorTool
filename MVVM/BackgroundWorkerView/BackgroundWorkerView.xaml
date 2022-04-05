@@ -1,0 +1,48 @@
+﻿<Window x:Class="MVVM.BackgroundWorkerView.BackgroundWorkerView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MVVM.BackgroundWorkerView"
+        mc:Ignorable="d"
+        Title="Background example" Height="800" Width="600">
+
+    <!--Buiten grid-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <!--Binnengrid-->
+        <Grid Grid.Row="1">
+            <!--Listview with LongLastingTasks where items bind to Message property-->
+            <ListView Margin="15,0,15,0" ItemsSource="{Binding TaskList}" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Message}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <!--Knoppenbalk -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Width="80" Height="24" Margin="20,0,0,0" Content="Close" Command="{Binding CloseCommand}"/>
+            <Button Width="80" Height="24" Margin="20,0,0,0" Content="Stop" Command="{Binding StopCommand}"/>
+            <Button Width="80" Height="24" Margin="20,0,0,0" Content="Start" Command="{Binding StartCommand}"/>
+        </StackPanel>
+
+        <!--Status bar-->
+        <StatusBar Grid.Row="3">
+            <StatusBarItem Margin="15,0,0,0">
+                <ProgressBar Value="{Binding Progress}" Height="10" Width="200"/>
+            </StatusBarItem>
+            <StatusBarItem Margin="15,0,0,0">
+                <TextBlock Text="{Binding Message}"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>
