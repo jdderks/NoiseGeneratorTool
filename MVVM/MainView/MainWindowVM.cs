@@ -189,6 +189,7 @@ namespace MVVM.MainView
 
         private void ExportAction()
         {
+            StatusText = "Exported image";
             SaveImage();
         }
 
@@ -202,7 +203,7 @@ namespace MVVM.MainView
         private void AddSmoothLayerAction()
         {
             StatusText = "Added new smooth noise layer.";
-            SmoothNoiseLayerVM newLayer = new SmoothNoiseLayerVM() { Name = "New Smooth Layer", Seed = 1234 };
+            SmoothNoiseLayerVM newLayer = new SmoothNoiseLayerVM() { Name = "New smooth Layer", Seed = 1234 };
             layers.Add(newLayer);
             selectedLayer = Layers[layers.Count - 1];
         }
