@@ -11,7 +11,8 @@ namespace MVVM.Models
         public int Seed
         {
             get { return seed; }
-            set { 
+            set
+            {
                 seed = value;
                 OnPropertyChanged(nameof(Seed));
             }

@@ -48,7 +48,7 @@ namespace MVVM.MainView
 
         #region Properties
         public GenerationModes mode { get; } = GenerationModes.WhiteNoise;
-        
+
         public ObservableCollection<LayerVM> Layers
         {
             get { return layers; }
@@ -112,6 +112,8 @@ namespace MVVM.MainView
         public ICommand GenerateCommand { get; }
         public ICommand ExportImageCommand { get; }
         public ICommand AddNewLayerCommand { get; }
+        public ICommand AddNewSmoothNoiseLayerCommand { get; }
+        public ICommand RemoveLayerCommand { get; }
         #endregion
 
         #region Constructor
@@ -124,11 +126,11 @@ namespace MVVM.MainView
             pixels = new byte[resolution, resolution, 4];
 
             Layers = new ObservableCollection<LayerVM>();
-            Layers.Add(new LayerVM() {Name = "Newest layer"});
-            Layers.Add(new LayerVM() {Name = "Very big layerrrrrrrrrrrrr"});
-            Layers.Add(new LayerVM() {Name = "Newest layer"});
-            Layers.Add(new SmoothNoiseLayerVM() { Name = "New Smooth Layer", Seed = 000000 });
-            selectedLayer = layers[0];
+            //Layers.Add(new LayerVM() {Name = "Newest layer"});
+            //Layers.Add(new LayerVM() {Name = "Very big layerrrrrrrrrrrrr"});
+            //Layers.Add(new LayerVM() {Name = "Newest layer"});
+            //Layers.Add(new SmoothNoiseLayerVM() { Name = "New Smooth Layer", Seed = 000000 });
+            //selectedLayer = layers[0];
 
             GenerateWhiteNoise();
 
@@ -136,6 +138,8 @@ namespace MVVM.MainView
             GenerateCommand = new Command(GenerateAction);
             ExportImageCommand = new Command(ExportAction);
             AddNewLayerCommand = new Command(AddLayerAction);
+            AddNewSmoothNoiseLayerCommand = new Command(AddSmoothLayerAction);
+            RemoveLayerCommand = new Command(RemoveSelectedLayerAction);
         }
         #endregion
 
@@ -181,6 +185,17 @@ namespace MVVM.MainView
             LayerVM newLayer = new LayerVM() { Name = "New layer" };
             Layers.Add(newLayer);
             selectedLayer = Layers[layers.Count - 1];
+        }
+        private void AddSmoothLayerAction()
+        {
+            SmoothNoiseLayerVM newLayer = new SmoothNoiseLayerVM() { Name = "New Smooth Layer", Seed = 1234 };
+            layers.Add(newLayer);
+            selectedLayer = Layers[layers.Count - 1];
+        }
+
+        private void RemoveSelectedLayerAction()
+        {
+            layers.Remove(selectedLayer);
         }
         #endregion
 
@@ -229,6 +244,7 @@ namespace MVVM.MainView
             }
             return bmImage;
         }
+
         private void GenerateWhiteNoise()
         {
             bitmap = Perlin.Noise.GenerateWhiteNoise(resolution, resolution, Seed);
@@ -272,7 +288,6 @@ namespace MVVM.MainView
             }
             UpdateImageRect();
         }
-
 
         private void UpdateImageRect()
         {

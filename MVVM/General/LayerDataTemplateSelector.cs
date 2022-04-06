@@ -28,6 +28,5 @@ namespace MVVM.DataTemplateSelectors
             return null;
             //return base.SelectTemplate(item, container);
         }
-
     }
 }

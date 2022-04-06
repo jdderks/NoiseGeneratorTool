@@ -17,7 +17,6 @@ namespace MVVM.MainView
 
         ObservableCollection<LayerVM> observableLayers = new ObservableCollection<LayerVM>();
 
-        private ICommand AddNewLayerCommand { get; }
 
         public MainWindow()
         {
@@ -27,13 +26,8 @@ namespace MVVM.MainView
             //observableLayers.Add(new Layer() {Name = "Nieuwe layer" });
             //lbLayers.ItemsSource = observableLayers;
 
-            AddNewLayerCommand = new Command(AddnewLayer);
+            //AddNewLayerCommand = new Command(AddnewLayer);
         }
-
-        //private void AddNewLayer()
-        //{
-        //    layers.Add(new Layer() {Name = "New layer"});
-        //}
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -46,16 +40,12 @@ namespace MVVM.MainView
             e.Handled = regex.IsMatch(e.Text);
         }
 
-        private void AddnewLayer()
-        {
-            LayerVM newLayer = new LayerVM() {Name = "New layer" };
-            observableLayers.Add(newLayer);
-            //lbLayers.ItemsSource = observableLayers;
-        }
 
         private void RemoveLayer(object sender, RoutedEventArgs e)
         {
-
+            LayerVM selectedLayer = layerListBox.SelectedItem as LayerVM;
+            observableLayers.Remove(selectedLayer);
+               
         }
     }
 }
