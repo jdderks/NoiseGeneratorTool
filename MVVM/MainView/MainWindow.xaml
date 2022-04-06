@@ -11,7 +11,6 @@
         mc:Ignorable="d"
         Title="JTB v0.24" Height="450" Width="872" MinHeight="400" MinWidth="700" ResizeMode="CanResize">
 
-    <!--Assign viewmodel-->
     <Window.DataContext>
         <local:MainWindowVM/>
     </Window.DataContext>
@@ -34,7 +33,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="30"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
@@ -173,15 +171,11 @@
 
         </Grid>
 
-        <!--Knoppenbalk -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft">
 
-
-        </StackPanel>
 
         <!--Status bar-->
         <StatusBar Grid.Row="3">
-
+            <TextBlock Text="{Binding StatusText}"/>
         </StatusBar>
     </Grid>
 </Window>

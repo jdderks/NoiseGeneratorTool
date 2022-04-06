@@ -37,6 +37,8 @@ namespace MVVM.MainView
         private int resolution = 512;
         private int _selectedGenerationMode;
 
+        private string statusText;
+
         static MainWindowVM()
         {
             AvailableGenerationModes = new List<string>(Enum.GetNames(typeof(GenerationModes)));
@@ -108,6 +110,16 @@ namespace MVVM.MainView
             }
         }
 
+        public string StatusText
+        {
+            get { return statusText; }
+            set
+            {
+                statusText = value;
+                OnPropertyChanged(nameof(StatusText));
+            }
+
+        }
         public ICommand ExitCommand { get; }
         public ICommand GenerateCommand { get; }
         public ICommand ExportImageCommand { get; }
@@ -182,12 +194,14 @@ namespace MVVM.MainView
 
         private void AddLayerAction()
         {
+            StatusText = "Added new layer.";
             LayerVM newLayer = new LayerVM() { Name = "New layer" };
             Layers.Add(newLayer);
             selectedLayer = Layers[layers.Count - 1];
         }
         private void AddSmoothLayerAction()
         {
+            StatusText = "Added new smooth noise layer.";
             SmoothNoiseLayerVM newLayer = new SmoothNoiseLayerVM() { Name = "New Smooth Layer", Seed = 1234 };
             layers.Add(newLayer);
             selectedLayer = Layers[layers.Count - 1];
@@ -195,6 +209,7 @@ namespace MVVM.MainView
 
         private void RemoveSelectedLayerAction()
         {
+            StatusText = "Removed selected layer.";
             layers.Remove(selectedLayer);
         }
         #endregion
