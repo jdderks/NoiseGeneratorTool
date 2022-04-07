@@ -130,6 +130,8 @@ namespace MVVM.MainView
             AddNewLayerCommand = new Command(AddLayerAction);
             AddNewSmoothNoiseLayerCommand = new Command(AddSmoothLayerAction);
             RemoveLayerCommand = new Command(RemoveSelectedLayerAction);
+
+            GenerateAction();
         }
         #endregion
 
@@ -151,6 +153,9 @@ namespace MVVM.MainView
 
         private void GenerateAction()
         {
+            CalculateLayers();
+            UpdateImageRect();
+
             //switch ((GenerationModes)SelectedGenerationMode)
             //{
             //    case GenerationModes.WhiteNoise:
@@ -178,11 +183,12 @@ namespace MVVM.MainView
                 Name = "New layer", 
                 ResolutionX = 512, 
                 ResolutionY = 512 ,
-                Opacity = 100,
+                Opacity = 255,
                 ColorR = 255,
                 ColorG = 255,
                 ColorB = 255
             };
+            newLayer.CalculateLayerContent();
             Layers.Add(newLayer);
             selectedLayer = Layers[layers.Count - 1];
         }
@@ -194,13 +200,14 @@ namespace MVVM.MainView
                 Name = "New smooth Layer",
                 ResolutionX = 512,
                 ResolutionY = 512,
-                Opacity = 100,
+                Opacity = 255,
                 ColorR = 255,
                 ColorG = 255,
                 ColorB = 255,
                 Seed = 1234,
                 IsSmoothed = false
             };
+            newLayer.CalculateLayerContent();
             layers.Add(newLayer);
             selectedLayer = Layers[layers.Count - 1];
         }
@@ -257,26 +264,27 @@ namespace MVVM.MainView
             }
             return bmImage;
         }
+        #region Noise region
 
-        private void GenerateWhiteNoise(string seed)
-        {
-            bitmap = Perlin.Noise.GenerateWhiteNoise(resolution, resolution, seed);
+        //private void GenerateWhiteNoise(string seed)
+        //{
+        //    bitmap = Perlin.Noise.GenerateWhiteNoise(resolution, resolution, seed);
 
-            for (int x = 0; x < resolution; x++)
-            {
-                for (int y = 0; y < resolution; y++)
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        pixels[x, y, 3] = 255; //3 is alpha channel
+        //    for (int x = 0; x < resolution; x++)
+        //    {
+        //        for (int y = 0; y < resolution; y++)
+        //        {
+        //            for (int i = 0; i < 3; i++)
+        //            {
+        //                pixels[x, y, 3] = 255; //3 is alpha channel
 
-                        pixels[x, y, 0] = (byte)(bitmap[x][y] * 255); //Blue
-                        pixels[x, y, 1] = (byte)(bitmap[x][y] * 255); //Green
-                        pixels[x, y, 2] = (byte)(bitmap[x][y] * 255); //Red
-                    }
-                }
-            }
-        }
+        //                pixels[x, y, 0] = (byte)(bitmap[x][y] * 255); //Blue
+        //                pixels[x, y, 1] = (byte)(bitmap[x][y] * 255); //Green
+        //                pixels[x, y, 2] = (byte)(bitmap[x][y] * 255); //Red
+        //            }
+        //        }
+        //    }
+        //}
 
         //private void GenerateSmoothWhiteNoise(string seed)
         //{
@@ -299,7 +307,7 @@ namespace MVVM.MainView
         //    }
         //    UpdateImageRect();
         //}
-
+        #endregion
         private void UpdateImageRect()
         {
             byte[] pixels1d = new byte[resolution * resolution * 4];
@@ -328,13 +336,15 @@ namespace MVVM.MainView
                 switch (layers[i].BlendModeIndex)
                 {
                     case 0: //Additive
-                        for (int x = 0; x < layers.Count; x++)
+                        for (int x = 0; x < layers[i].Pixels.GetLength(0); x++)
                         {
-                            for (int y = 0; y < layers.Count; y++)
+                            for (int y = 0; y < layers[i].Pixels.GetLength(1); y++)
                             {
-                                layers[i].Pixels[x, y, 0] += pixels[x, y, 0];
-                                layers[i].Pixels[x, y, 1] += pixels[x, y, 1];
-                                layers[i].Pixels[x, y, 2] += pixels[x, y, 2];
+                                pixels[x, y, 0] += layers[i].Pixels[x, y, 0];
+                                pixels[x, y, 1] += layers[i].Pixels[x, y, 1];
+                                pixels[x, y, 2] += layers[i].Pixels[x, y, 2];
+
+                                pixels[x, y, 3] += layers[i].Pixels[x, y, 3];
 
                                 if (pixels[x, y, 0] > 255)
                                 {
@@ -343,6 +353,10 @@ namespace MVVM.MainView
                                 if (pixels[x, y, 1] > 255)
                                 {
                                     pixels[x, y, 1] = 255;
+                                }
+                                if (pixels[x, y, 2] > 255)
+                                {
+                                    pixels[x, y, 2] = 255;
                                 }
                                 if (pixels[x, y, 2] > 255)
                                 {

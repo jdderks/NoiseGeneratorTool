@@ -27,6 +27,8 @@ namespace MVVM.Models
 
         private byte[,,] pixels;
 
+
+
         #region Properties
         public byte[,,] Pixels
         {
@@ -133,17 +135,19 @@ namespace MVVM.Models
 
         public virtual void CalculateLayerContent()
         {
+            pixels = new byte[resolutionX, resolutionY, 4];
+
             for (int x = 0; x < resolutionX; x++)
             {
                 for (int y = 0; y < resolutionY; y++)
                 {
-                    for (int i = 0; i < 3; i++)
+                    for (int i = 0; i < 4; i++)
                     {
-                        pixels[x, y, 3] = opacity;
-
                         pixels[x, y, 0] = colorB;
                         pixels[x, y, 1] = colorG;
                         pixels[x, y, 2] = colorR;
+
+                        pixels[x, y, 3] = opacity;
                     }
                 }
             }

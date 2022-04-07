@@ -37,6 +37,7 @@ namespace MVVM.Models
 
         public override void CalculateLayerContent()
         {
+            Pixels = new byte[ResolutionX, ResolutionY, 4];
             GenerateSmoothWhiteNoise(seed.ToString());
         }
 
@@ -54,24 +55,28 @@ namespace MVVM.Models
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        if (ColorR != 0)
-                        {
-                            float redMultiplier = ColorR / 255;
-                        }
-                        if (ColorG != 0)
-                        {
-                            float greenMultiplier = ColorG / 255;
-                        }
-                        if (ColorB != 0)
-                        {
-                            float blueMultiplier = ColorB / 255;
-                        }
+                        //if (ColorR != 0)
+                        //{
+                        //    float redMultiplier = ColorR / 255;
+                        //}
+                        //if (ColorG != 0)
+                        //{
+                        //    float greenMultiplier = ColorG / 255;
+                        //}
+                        //if (ColorB != 0)
+                        //{
+                        //    float blueMultiplier = ColorB / 255;
+                        //}
 
                         Pixels[x, y, 3] = 255; //3 is alpha channel
 
-                        Pixels[x, y, 0] = (byte)(bitmap[x][y] * 255); //Blue
-                        Pixels[x, y, 1] = (byte)(bitmap[x][y] * 255); //Green
-                        Pixels[x, y, 2] = (byte)(bitmap[x][y] * 255); //Red
+                        Pixels[x, y, 0] = Math.Clamp((byte)(bitmap[x][y] * 255),(byte)0,ColorB); //Blue
+                        Pixels[x, y, 1] = Math.Clamp((byte)(bitmap[x][y] * 255),(byte)0,ColorG); //Green
+                        Pixels[x, y, 2] = Math.Clamp((byte)(bitmap[x][y] * 255),(byte)0,ColorR); //Red
+
+                        //Pixels[x, y, 0] = (byte)(bitmap[x][y] * 255); //Blue
+                        //Pixels[x, y, 1] = (byte)(bitmap[x][y] * 255); //Green
+                        //Pixels[x, y, 2] = (byte)(bitmap[x][y] * 255); //Red
                     }
                 }
             }
