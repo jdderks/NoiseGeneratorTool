@@ -153,6 +153,7 @@ namespace MVVM.MainView
 
         private void GenerateAction()
         {
+            pixels = new byte[resolution, resolution, 4]; //Reset the pixels
             CalculateLayers();
             UpdateImageRect();
 
@@ -178,11 +179,12 @@ namespace MVVM.MainView
 
         private void AddLayerAction()
         {
-            StatusText = "Added new layer.";
-            LayerVM newLayer = new LayerVM() { 
-                Name = "New layer", 
-                ResolutionX = 512, 
-                ResolutionY = 512 ,
+            StatusText = "Added new solid colour layer.";
+            LayerVM newLayer = new LayerVM()
+            {
+                Name = "New layer",
+                ResolutionX = 512,
+                ResolutionY = 512,
                 Opacity = 255,
                 ColorR = 255,
                 ColorG = 255,
@@ -339,7 +341,8 @@ namespace MVVM.MainView
                         for (int x = 0; x < layers[i].Pixels.GetLength(0); x++)
                         {
                             for (int y = 0; y < layers[i].Pixels.GetLength(1); y++)
-                            {
+                            { 
+                                StatusText = "Layer below does not exist";
                                 pixels[x, y, 0] += layers[i].Pixels[x, y, 0];
                                 pixels[x, y, 1] += layers[i].Pixels[x, y, 1];
                                 pixels[x, y, 2] += layers[i].Pixels[x, y, 2];
@@ -362,12 +365,10 @@ namespace MVVM.MainView
                                 {
                                     pixels[x, y, 2] = 255;
                                 }
-
-                                //layers[i].Bitmap[x][y] += bitmap[x][y];
-                                //if (bitmap[x][y] > 255)
-                                //{
-                                //    bitmap[x][y] = 255;
-                                //}
+                                if (pixels[x, y, 3] > 255)
+                                {
+                                    pixels[x, y, 3] = 255;
+                                }
                             }
                         }
                         break;
