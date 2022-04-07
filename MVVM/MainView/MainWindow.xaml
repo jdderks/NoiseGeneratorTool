@@ -9,7 +9,7 @@
         xmlns:dts="clr-namespace:MVVM.DataTemplateSelectors"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="JTB v0.24" Height="450" Width="872" MinHeight="400" MinWidth="700" ResizeMode="CanResize">
+        Title="JTB v0.25" Height="450" Width="872" MinHeight="400" MinWidth="700" ResizeMode="CanResize">
 
     <Window.DataContext>
         <local:MainWindowVM/>
@@ -115,9 +115,9 @@
                             <ColumnDefinition Width="100"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Auto refresh" Grid.Column="1"/>
-                        <CheckBox Grid.Column="0"/>
-                        <Button Width="80"  Content="Refresh" Command="{Binding GenerateCommand}" Grid.Column="2"/>
+                        <TextBlock Text="Auto refresh" Grid.Column="1" VerticalAlignment="Center"/>
+                        <CheckBox Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Button Width="80"  Content="Refresh" Command="{Binding GenerateCommand}" Grid.Column="2" VerticalAlignment="Center"/>
                     </Grid>
                 </Grid>
             </Border>
@@ -129,7 +129,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="20"/>
                         <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
 
@@ -148,20 +148,12 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
 
-                    <!--<Button Content="Add new layer" Grid.Row="2" 
-                            Command="{Binding AddNewLayerCommand}"/>-->
-                    <ComboBox Grid.Row="2" >
-                        <ComboBoxItem IsSelected="true">
-                            <Button Width="160" Content="Add new layer" Command="{Binding AddNewLayerCommand}"/>
-                        </ComboBoxItem>
-                        <ComboBoxItem>
-                            <Button Width="160" Content="Add noise layer" Command="{Binding AddNewSmoothNoiseLayerCommand}"/>
-                        </ComboBoxItem>
-                        <ComboBoxItem>
-                            <Button Width="160" Content="Add mask layer" Command="{Binding AddNewLayerCommand}"/>
-                        </ComboBoxItem>
-                    </ComboBox>
-
+                    <Menu Grid.Row="2">
+                        <MenuItem Header="Select new layer type" Width="200" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" FlowDirection="LeftToRight">
+                            <MenuItem Header="Add new layer" Command="{Binding AddNewLayerCommand}"/>
+                            <MenuItem Header="Add new smooth noise layer" Command="{Binding AddNewSmoothNoiseLayerCommand}"/>
+                        </MenuItem>
+                    </Menu>
 
                     <Button Content="Remove selected layer" Grid.Row="3" 
                             Command="{Binding RemoveLayerCommand}"/>

@@ -29,13 +29,11 @@ namespace MVVM.MainView
 
     class MainWindowVM : ViewModel
     {
-        private string text;
-        private string seed;
         private WriteableBitmap img;
         private byte[,,] pixels;
         float[][] bitmap;
         private int resolution = 512;
-        private int _selectedGenerationMode;
+        //private int _selectedGenerationMode;
 
         private string statusText;
 
@@ -49,7 +47,7 @@ namespace MVVM.MainView
         public LayerVM selectedLayer;
 
         #region Properties
-        public GenerationModes mode { get; } = GenerationModes.WhiteNoise;
+        //public GenerationModes mode { get; } = GenerationModes.WhiteNoise;
 
         public ObservableCollection<LayerVM> Layers
         {
@@ -70,35 +68,17 @@ namespace MVVM.MainView
             }
         }
 
-        public int SelectedGenerationMode
-        {
-            get { return _selectedGenerationMode; }
-            set
-            {
-                _selectedGenerationMode = value;
-                OnPropertyChanged(nameof(SelectedGenerationMode));
-            }
-        }
+        //public int SelectedGenerationMode
+        //{
+        //    get { return _selectedGenerationMode; }
+        //    set
+        //    {
+        //        _selectedGenerationMode = value;
+        //        OnPropertyChanged(nameof(SelectedGenerationMode));
+        //    }
+        //}
 
-        public string Seed
-        {
-            get { return seed; }
-            set
-            {
-                seed = value;
-                OnPropertyChanged(nameof(Seed));
-            }
-        }
 
-        public string Text
-        {
-            get { return text; }
-            set
-            {
-                text = value;
-                OnPropertyChanged(nameof(Text));
-            }
-        }
 
         public WriteableBitmap DisplayImage
         {
@@ -131,8 +111,6 @@ namespace MVVM.MainView
         #region Constructor
         public MainWindowVM()
         {
-            Seed = "0123456789";
-            Text = "New layer";
             DisplayImage = new WriteableBitmap(
             resolution, resolution, 96, 96, PixelFormats.Bgra32, null);
             pixels = new byte[resolution, resolution, 4];
@@ -144,7 +122,7 @@ namespace MVVM.MainView
             //Layers.Add(new SmoothNoiseLayerVM() { Name = "New Smooth Layer", Seed = 000000 });
             //selectedLayer = layers[0];
 
-            GenerateWhiteNoise();
+            //GenerateWhiteNoise();
 
             ExitCommand = new Command(ExitAction);
             GenerateCommand = new Command(GenerateAction);
@@ -173,18 +151,18 @@ namespace MVVM.MainView
 
         private void GenerateAction()
         {
-            switch ((GenerationModes)SelectedGenerationMode)
-            {
-                case GenerationModes.WhiteNoise:
-                    GenerateWhiteNoise();
-                    break;
-                case GenerationModes.SmoothedNoise:
-                    GenerateWhiteNoise();
-                    GenerateSmoothWhiteNoise();
-                    break;
-                default:
-                    break;
-            }
+            //switch ((GenerationModes)SelectedGenerationMode)
+            //{
+            //    case GenerationModes.WhiteNoise:
+            //        GenerateWhiteNoise();
+            //        break;
+            //    case GenerationModes.SmoothedNoise:
+            //        GenerateWhiteNoise();
+            //        GenerateSmoothWhiteNoise();
+            //        break;
+            //    default:
+            //        break;
+            //}
         }
 
         private void ExportAction()
@@ -196,14 +174,33 @@ namespace MVVM.MainView
         private void AddLayerAction()
         {
             StatusText = "Added new layer.";
-            LayerVM newLayer = new LayerVM() { Name = "New layer" };
+            LayerVM newLayer = new LayerVM() { 
+                Name = "New layer", 
+                ResolutionX = 512, 
+                ResolutionY = 512 ,
+                Opacity = 100,
+                ColorR = 255,
+                ColorG = 255,
+                ColorB = 255
+            };
             Layers.Add(newLayer);
             selectedLayer = Layers[layers.Count - 1];
         }
         private void AddSmoothLayerAction()
         {
             StatusText = "Added new smooth noise layer.";
-            SmoothNoiseLayerVM newLayer = new SmoothNoiseLayerVM() { Name = "New smooth Layer", Seed = 1234 };
+            SmoothNoiseLayerVM newLayer = new SmoothNoiseLayerVM()
+            {
+                Name = "New smooth Layer",
+                ResolutionX = 512,
+                ResolutionY = 512,
+                Opacity = 100,
+                ColorR = 255,
+                ColorG = 255,
+                ColorB = 255,
+                Seed = 1234,
+                IsSmoothed = false
+            };
             layers.Add(newLayer);
             selectedLayer = Layers[layers.Count - 1];
         }
@@ -261,32 +258,9 @@ namespace MVVM.MainView
             return bmImage;
         }
 
-        private void GenerateWhiteNoise()
+        private void GenerateWhiteNoise(string seed)
         {
-            bitmap = Perlin.Noise.GenerateWhiteNoise(resolution, resolution, Seed);
-
-            for (int x = 0; x < resolution; x++)
-            {
-                for (int y = 0; y < resolution; y++)
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        pixels[x, y, 3] = 255; //3 is alpha channel
-                        
-                        pixels[x, y, 0] = (byte)(bitmap[x][y]*255); //Blue
-                        pixels[x, y, 1] = (byte)(bitmap[x][y]*255); //Green
-                        pixels[x, y, 2] = (byte)(bitmap[x][y]*255); //Red
-                    }
-                }
-            }
-
-            UpdateImageRect();
-        }
-
-        private void GenerateSmoothWhiteNoise()
-        {
-            bitmap = Perlin.Noise.GenerateWhiteNoise(resolution, resolution, Seed);
-            bitmap = Perlin.Noise.GenerateSmoothNoise(bitmap, 3);
+            bitmap = Perlin.Noise.GenerateWhiteNoise(resolution, resolution, seed);
 
             for (int x = 0; x < resolution; x++)
             {
@@ -302,8 +276,29 @@ namespace MVVM.MainView
                     }
                 }
             }
-            UpdateImageRect();
         }
+
+        //private void GenerateSmoothWhiteNoise(string seed)
+        //{
+        //    bitmap = Perlin.Noise.GenerateWhiteNoise(resolution, resolution, seed);
+        //    bitmap = Perlin.Noise.GenerateSmoothNoise(bitmap, 3);
+
+        //    for (int x = 0; x < resolution; x++)
+        //    {
+        //        for (int y = 0; y < resolution; y++)
+        //        {
+        //            for (int i = 0; i < 3; i++)
+        //            {
+        //                pixels[x, y, 3] = 255; //3 is alpha channel
+
+        //                pixels[x, y, 0] = (byte)(bitmap[x][y] * 255); //Blue
+        //                pixels[x, y, 1] = (byte)(bitmap[x][y] * 255); //Green
+        //                pixels[x, y, 2] = (byte)(bitmap[x][y] * 255); //Red
+        //            }
+        //        }
+        //    }
+        //    UpdateImageRect();
+        //}
 
         private void UpdateImageRect()
         {
@@ -324,5 +319,62 @@ namespace MVVM.MainView
         }
         #endregion
 
+        private void CalculateLayers()
+        {
+            for (int i = 0; i < layers.Count; i++)
+            {
+                layers[i].CalculateLayerContent();
+
+                switch (layers[i].BlendModeIndex)
+                {
+                    case 0: //Additive
+                        for (int x = 0; x < layers.Count; x++)
+                        {
+                            for (int y = 0; y < layers.Count; y++)
+                            {
+                                layers[i].Pixels[x, y, 0] += pixels[x, y, 0];
+                                layers[i].Pixels[x, y, 1] += pixels[x, y, 1];
+                                layers[i].Pixels[x, y, 2] += pixels[x, y, 2];
+
+                                if (pixels[x, y, 0] > 255)
+                                {
+                                    pixels[x, y, 0] = 255;
+                                }
+                                if (pixels[x, y, 1] > 255)
+                                {
+                                    pixels[x, y, 1] = 255;
+                                }
+                                if (pixels[x, y, 2] > 255)
+                                {
+                                    pixels[x, y, 2] = 255;
+                                }
+
+                                //layers[i].Bitmap[x][y] += bitmap[x][y];
+                                //if (bitmap[x][y] > 255)
+                                //{
+                                //    bitmap[x][y] = 255;
+                                //}
+                            }
+                        }
+                        break;
+                    case 1: //Multiply
+                        for (int x = 0; x < layers.Count; x++)
+                        {
+
+                            //for (int y = 0; y < layers.Count; y++)
+                            //{
+                            //    float multiplier = layers[i].Bitmap[x][y] / 255;
+                            //    bitmap[x][y] *= multiplier;
+                            //}
+                        }
+
+                        break;
+                    default:
+                        break;
+                }
+
+
+            }
+        }
     }
 }

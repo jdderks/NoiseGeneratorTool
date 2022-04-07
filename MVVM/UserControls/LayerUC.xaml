@@ -4,10 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MVVM.UserControls"
+             xmlns:mainView="clr-namespace:MVVM.MainView"
+             xmlns:models="clr-namespace:MVVM.Models"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
-    <StackPanel Margin="0,0,0,0" Orientation="Vertical" FlowDirection="LeftToRight">
+
+        <StackPanel Margin="0,0,0,0" Orientation="Vertical" FlowDirection="LeftToRight">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -15,6 +17,64 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="Name:"/>
             <TextBox Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Resolution X:"/>
+            <TextBox Grid.Column="1" Text="{Binding ResolutionX, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Resolution Y:"/>
+            <TextBox Grid.Column="1" Text="{Binding ResolutionY, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Opacity: (0,100)"/>
+            <TextBox Grid.Column="1" Text="{Binding Opacity, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Red color: (0,255)"/>
+            <TextBox Grid.Column="1" Text="{Binding ColorR, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Green color: (0,255)"/>
+            <TextBox Grid.Column="1" Text="{Binding ColorG, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Blue color: (0,255)"/>
+            <TextBox Grid.Column="1" Text="{Binding ColorB, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Blend mode:"/>
+            <ComboBox Grid.Column="1" 
+                      ItemsSource="{Binding Source={mainView:EnumBindingSource {x:Type models:BlendModes}}}"
+                      SelectedIndex="{Binding BlendModeIndex}"/>
         </Grid>
     </StackPanel>
     
