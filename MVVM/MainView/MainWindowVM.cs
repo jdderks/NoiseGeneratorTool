@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
+using System.Xml.Serialization;
 
 namespace MVVM.MainView
 {
@@ -33,6 +34,7 @@ namespace MVVM.MainView
         private byte[,,] pixels;
         float[][] bitmap;
         private int resolution = 512;
+        private string projectName;
         //private int _selectedGenerationMode;
 
         private string statusText;
@@ -68,18 +70,6 @@ namespace MVVM.MainView
             }
         }
 
-        //public int SelectedGenerationMode
-        //{
-        //    get { return _selectedGenerationMode; }
-        //    set
-        //    {
-        //        _selectedGenerationMode = value;
-        //        OnPropertyChanged(nameof(SelectedGenerationMode));
-        //    }
-        //}
-
-
-
         public WriteableBitmap DisplayImage
         {
             get { return img; }
@@ -100,14 +90,16 @@ namespace MVVM.MainView
             }
 
         }
-        public ICommand ExitCommand { get; }
-        public ICommand GenerateCommand { get; }
-        public ICommand ExportImageCommand { get; }
-        public ICommand AddNewLayerCommand { get; }
-        public ICommand AddNewSmoothNoiseLayerCommand { get; }
-        public ICommand RemoveLayerCommand { get; }
+        [XmlIgnore] public ICommand ExitCommand { get; }
+        [XmlIgnore] public ICommand GenerateCommand { get; }
+        [XmlIgnore] public ICommand SaveProjectCommand { get; }
+        [XmlIgnore] public ICommand SaveAsProjectCommand { get; }
+        [XmlIgnore] public ICommand LoadProjectCommand { get; }
+        [XmlIgnore] public ICommand ExportImageCommand { get; }
+        [XmlIgnore] public ICommand AddNewLayerCommand { get; }
+        [XmlIgnore] public ICommand AddNewSmoothNoiseLayerCommand { get; }
+        [XmlIgnore] public ICommand RemoveLayerCommand { get; }
         #endregion
-
         #region Constructor
         public MainWindowVM()
         {
@@ -126,6 +118,9 @@ namespace MVVM.MainView
 
             ExitCommand = new Command(ExitAction);
             GenerateCommand = new Command(GenerateAction);
+            SaveProjectCommand = new Command(SaveProjectAction, () => !string.IsNullOrEmpty(projectName));
+            SaveAsProjectCommand = new Command(SaveAsProjectAction);
+            LoadProjectCommand = new Command(LoadProjectAction);
             ExportImageCommand = new Command(ExportAction);
             AddNewLayerCommand = new Command(AddLayerAction);
             AddNewSmoothNoiseLayerCommand = new Command(AddSmoothLayerAction);
@@ -134,7 +129,6 @@ namespace MVVM.MainView
             GenerateAction();
         }
         #endregion
-
         #region Actions
         private void SetModeAction()
         {
@@ -156,19 +150,36 @@ namespace MVVM.MainView
             pixels = new byte[resolution, resolution, 4]; //Reset the pixels
             CalculateLayers();
             UpdateImageRect();
+        }
+        private void SaveProjectAction()
+        {
+            SerializeDeSerialize<ObservableCollection<LayerVM>>.ToFile(projectName,  Layers);
+        }
 
-            //switch ((GenerationModes)SelectedGenerationMode)
-            //{
-            //    case GenerationModes.WhiteNoise:
-            //        GenerateWhiteNoise();
-            //        break;
-            //    case GenerationModes.SmoothedNoise:
-            //        GenerateWhiteNoise();
-            //        GenerateSmoothWhiteNoise();
-            //        break;
-            //    default:
-            //        break;
-            //}
+        private void SaveAsProjectAction()
+        {
+            var saveAsDialog = new SaveFileDialog()
+            {
+                Filter = "Project files (*.jtb)|*.jtb;"
+            }; 
+            if (saveAsDialog.ShowDialog() == true)
+            {
+                projectName = saveAsDialog.FileName;
+                SaveProjectAction();
+            }
+        }
+
+        private void LoadProjectAction()
+        {
+            var openFileDialog = new OpenFileDialog()
+            {
+                Filter = "Project files (*.jtb)|*.jtb;"
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                projectName = openFileDialog.FileName;
+                Layers = LayerVM.Load(projectName);
+            }
         }
 
         private void ExportAction()
@@ -182,7 +193,7 @@ namespace MVVM.MainView
             StatusText = "Added new solid colour layer.";
             LayerVM newLayer = new LayerVM()
             {
-                Name = "New layer",
+                Name = "New solid color layer",
                 ResolutionX = 512,
                 ResolutionY = 512,
                 Opacity = 255,
@@ -199,7 +210,7 @@ namespace MVVM.MainView
             StatusText = "Added new smooth noise layer.";
             SmoothNoiseLayerVM newLayer = new SmoothNoiseLayerVM()
             {
-                Name = "New smooth Layer",
+                Name = "New noise layer",
                 ResolutionX = 512,
                 ResolutionY = 512,
                 Opacity = 255,
@@ -220,7 +231,6 @@ namespace MVVM.MainView
             layers.Remove(selectedLayer);
         }
         #endregion
-
         #region ExportImage
         private void SaveImage()
         {
@@ -247,7 +257,6 @@ namespace MVVM.MainView
             }
         }
         #endregion
-
         #region Image Generation
         public BitmapImage ConvertWriteableBitmapToBitmapImage(WriteableBitmap wbm)
         {
@@ -266,6 +275,7 @@ namespace MVVM.MainView
             }
             return bmImage;
         }
+        #endregion
         #region Noise region
 
         //private void GenerateWhiteNoise(string seed)
@@ -310,6 +320,7 @@ namespace MVVM.MainView
         //    UpdateImageRect();
         //}
         #endregion
+        #region Layermath
         private void UpdateImageRect()
         {
             byte[] pixels1d = new byte[resolution * resolution * 4];
@@ -327,7 +338,6 @@ namespace MVVM.MainView
             int stride = 4 * resolution;
             DisplayImage.WritePixels(rect, pixels1d, stride, 0);
         }
-        #endregion
 
         private void CalculateLayers()
         {
@@ -341,8 +351,7 @@ namespace MVVM.MainView
                         for (int x = 0; x < layers[i].Pixels.GetLength(0); x++)
                         {
                             for (int y = 0; y < layers[i].Pixels.GetLength(1); y++)
-                            { 
-                                StatusText = "Layer below does not exist";
+                            {
                                 pixels[x, y, 0] += layers[i].Pixels[x, y, 0];
                                 pixels[x, y, 1] += layers[i].Pixels[x, y, 1];
                                 pixels[x, y, 2] += layers[i].Pixels[x, y, 2];
@@ -391,5 +400,8 @@ namespace MVVM.MainView
 
             }
         }
+        #endregion
+
+        
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MVVM.Models
 {
-    class SmoothNoiseLayerVM : LayerVM
+    public class SmoothNoiseLayerVM : LayerVM
     {
         private float[][] bitmap;
         private int seed;
@@ -53,14 +53,13 @@ namespace MVVM.Models
             {
                 for (int y = 0; y < ResolutionY; y++)
                 {
-                    for (int i = 0; i < 3; i++)
+                    for (int i = 0; i < 4; i++)
                     {
-                        Pixels[x, y, 3] = Opacity; //3 is alpha channel
-
                         Pixels[x, y, 0] = Math.Clamp((byte)(bitmap[x][y] * 255),(byte)0,ColorB); //Blue
                         Pixels[x, y, 1] = Math.Clamp((byte)(bitmap[x][y] * 255),(byte)0,ColorG); //Green
                         Pixels[x, y, 2] = Math.Clamp((byte)(bitmap[x][y] * 255),(byte)0,ColorR); //Red
 
+                        Pixels[x, y, 3] = Opacity; //3 is alpha channel
                         //Pixels[x, y, 0] = (byte)(bitmap[x][y] * 255); //Blue
                         //Pixels[x, y, 1] = (byte)(bitmap[x][y] * 255); //Green
                         //Pixels[x, y, 2] = (byte)(bitmap[x][y] * 255); //Red

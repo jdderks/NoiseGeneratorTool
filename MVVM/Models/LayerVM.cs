@@ -1,7 +1,9 @@
 ﻿using MVVM.General;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace MVVM.Models
 {
@@ -11,7 +13,8 @@ namespace MVVM.Models
         Multiply = 1
     }
 
-    class LayerVM : ViewModel
+    [XmlInclude(typeof(SmoothNoiseLayerVM))]
+    public class LayerVM : ViewModel
     {
         private string name;
         private float[][] bitmap;
@@ -27,9 +30,13 @@ namespace MVVM.Models
 
         private byte[,,] pixels;
 
+        public LayerVM()
+        {
 
+        }
 
         #region Properties
+        [XmlIgnore]
         public byte[,,] Pixels
         {
             get { return pixels;  }
@@ -69,6 +76,7 @@ namespace MVVM.Models
                 OnPropertyChanged(nameof(ResolutionX));
             }
         }
+        [XmlIgnore]
         public float[][] Bitmap
         {
             get { return bitmap; }
@@ -152,5 +160,12 @@ namespace MVVM.Models
                 }
             }
         }
+
+        public static ObservableCollection<LayerVM> Load(string _fileName)
+        {
+            return SerializeDeSerialize<ObservableCollection<LayerVM>>.FromFile(_fileName);
+        }
     }
+
+
 }

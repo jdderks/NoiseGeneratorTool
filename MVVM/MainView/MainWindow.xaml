@@ -40,8 +40,9 @@
         <Menu Grid.Row="0">
             <MenuItem Header="File">
                 <MenuItem Header="New"/>
-                <MenuItem Header="Open"/>
-                <MenuItem Header="Save"/>
+                <MenuItem Header="Open" Command="{Binding LoadProjectCommand}"/>
+                <MenuItem Header="Save" Command="{Binding SaveProjectCommand}"/>
+                <MenuItem Header="Save As" Command="{Binding SaveAsProjectCommand}"/>
                 <MenuItem Header="Export" Command="{Binding ExportImageCommand}"/>
                 <Separator/>
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
