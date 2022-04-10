@@ -6,7 +6,6 @@ namespace MVVM.Models
 {
     public class SmoothNoiseLayerVM : LayerVM
     {
-        private float[][] bitmap;
         private int seed;
         private bool isSmoothed;
         public SmoothNoiseLayerVM()
@@ -43,10 +42,10 @@ namespace MVVM.Models
 
         private void GenerateSmoothWhiteNoise(string seed)
         {
-            bitmap = Perlin.Noise.GenerateWhiteNoise(ResolutionX, ResolutionY, seed);
+            Bitmap = Perlin.Noise.GenerateWhiteNoise(ResolutionX, ResolutionY, seed);
             if (isSmoothed)
             {
-                bitmap = Perlin.Noise.GenerateSmoothNoise(bitmap, 3);
+                Bitmap = Perlin.Noise.GenerateSmoothNoise(Bitmap, 3);
             }
 
             for (int x = 0; x < ResolutionX; x++)
@@ -55,9 +54,9 @@ namespace MVVM.Models
                 {
                     for (int i = 0; i < 4; i++)
                     {
-                        Pixels[x, y, 0] = Math.Clamp((byte)(bitmap[x][y] * 255),(byte)0,ColorB); //Blue
-                        Pixels[x, y, 1] = Math.Clamp((byte)(bitmap[x][y] * 255),(byte)0,ColorG); //Green
-                        Pixels[x, y, 2] = Math.Clamp((byte)(bitmap[x][y] * 255),(byte)0,ColorR); //Red
+                        Pixels[x, y, 0] = Math.Clamp((byte)(Bitmap[x][y] * 255),(byte)0,ColorB); //Blue
+                        Pixels[x, y, 1] = Math.Clamp((byte)(Bitmap[x][y] * 255),(byte)0,ColorG); //Green
+                        Pixels[x, y, 2] = Math.Clamp((byte)(Bitmap[x][y] * 255),(byte)0,ColorR); //Red
 
                         Pixels[x, y, 3] = Opacity; //3 is alpha channel
                         //Pixels[x, y, 0] = (byte)(bitmap[x][y] * 255); //Blue

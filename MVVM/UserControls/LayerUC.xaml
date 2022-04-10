@@ -39,7 +39,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Opacity: (0,100)"/>
+            <TextBlock Grid.Column="0" Text="Opacity: (0,255)"/>
             <TextBox Grid.Column="1" Text="{Binding Opacity, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
         <Grid>

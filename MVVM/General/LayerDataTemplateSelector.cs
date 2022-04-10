@@ -19,6 +19,10 @@ namespace MVVM.DataTemplateSelectors
                 if (item is SmoothNoiseLayerVM)
                 {
                     return element.FindResource("smoothLayerDataTemplate") as DataTemplate;
+                } 
+                else if (item is UploadOwnTextureLayerVM)
+                {
+                    return element.FindResource("uploadOwnImageDataTemplate") as DataTemplate;
                 }
                 else //(item is LayerVM)
                 {
@@ -26,7 +30,6 @@ namespace MVVM.DataTemplateSelectors
                 }
             }
             return null;
-            //return base.SelectTemplate(item, container);
         }
     }
 }

@@ -51,6 +51,26 @@ namespace MVVM.MainView
         #region Properties
         //public GenerationModes mode { get; } = GenerationModes.WhiteNoise;
 
+        public string ProjectName
+        {
+            get { return projectName; }
+            set
+            {
+                projectName = value;
+                OnPropertyChanged(nameof(ProjectName));
+                OnPropertyChanged(nameof(Title));
+            }
+        }
+
+        public string Title
+        {
+            get
+            {
+                string fileName = Path.GetFileNameWithoutExtension(projectName);
+                return string.IsNullOrEmpty(projectName) ? "JTB 0.30 - New Project" : "JTB 0.30 - " + fileName;
+            }
+        }
+
         public ObservableCollection<LayerVM> Layers
         {
             get { return layers; }
@@ -90,15 +110,16 @@ namespace MVVM.MainView
             }
 
         }
-        [XmlIgnore] public ICommand ExitCommand { get; }
-        [XmlIgnore] public ICommand GenerateCommand { get; }
-        [XmlIgnore] public ICommand SaveProjectCommand { get; }
-        [XmlIgnore] public ICommand SaveAsProjectCommand { get; }
-        [XmlIgnore] public ICommand LoadProjectCommand { get; }
-        [XmlIgnore] public ICommand ExportImageCommand { get; }
-        [XmlIgnore] public ICommand AddNewLayerCommand { get; }
-        [XmlIgnore] public ICommand AddNewSmoothNoiseLayerCommand { get; }
-        [XmlIgnore] public ICommand RemoveLayerCommand { get; }
+        public ICommand ExitCommand { get; }
+        public ICommand GenerateCommand { get; }
+        public ICommand SaveProjectCommand { get; }
+        public ICommand SaveAsProjectCommand { get; }
+        public ICommand LoadProjectCommand { get; }
+        public ICommand ExportImageCommand { get; }
+        public ICommand AddNewLayerCommand { get; }
+        public ICommand AddNewSmoothNoiseLayerCommand { get; }
+        public ICommand AddNewOwnImageLayerCommand { get; }
+        public ICommand RemoveLayerCommand { get; }
         #endregion
         #region Constructor
         public MainWindowVM()
@@ -108,13 +129,6 @@ namespace MVVM.MainView
             pixels = new byte[resolution, resolution, 4];
 
             Layers = new ObservableCollection<LayerVM>();
-            //Layers.Add(new LayerVM() {Name = "Newest layer"});
-            //Layers.Add(new LayerVM() {Name = "Very big layerrrrrrrrrrrrr"});
-            //Layers.Add(new LayerVM() {Name = "Newest layer"});
-            //Layers.Add(new SmoothNoiseLayerVM() { Name = "New Smooth Layer", Seed = 000000 });
-            //selectedLayer = layers[0];
-
-            //GenerateWhiteNoise();
 
             ExitCommand = new Command(ExitAction);
             GenerateCommand = new Command(GenerateAction);
@@ -122,8 +136,9 @@ namespace MVVM.MainView
             SaveAsProjectCommand = new Command(SaveAsProjectAction);
             LoadProjectCommand = new Command(LoadProjectAction);
             ExportImageCommand = new Command(ExportAction);
-            AddNewLayerCommand = new Command(AddLayerAction);
+            AddNewLayerCommand = new Command(AddSolidColorLayerAction);
             AddNewSmoothNoiseLayerCommand = new Command(AddSmoothLayerAction);
+            AddNewOwnImageLayerCommand = new Command(AddnewOwnImageLayerAction);
             RemoveLayerCommand = new Command(RemoveSelectedLayerAction);
 
             GenerateAction();
@@ -148,12 +163,16 @@ namespace MVVM.MainView
         private void GenerateAction()
         {
             pixels = new byte[resolution, resolution, 4]; //Reset the pixels
+            for (int i = 0; i < Layers.Count; i++)
+            {
+                Layers[i].CalculateLayerContent();
+            }
             CalculateLayers();
             UpdateImageRect();
         }
         private void SaveProjectAction()
         {
-            SerializeDeSerialize<ObservableCollection<LayerVM>>.ToFile(projectName,  Layers);
+            SerializeDeSerialize<ObservableCollection<LayerVM>>.ToFile(ProjectName, Layers);
         }
 
         private void SaveAsProjectAction()
@@ -161,10 +180,10 @@ namespace MVVM.MainView
             var saveAsDialog = new SaveFileDialog()
             {
                 Filter = "Project files (*.jtb)|*.jtb;"
-            }; 
+            };
             if (saveAsDialog.ShowDialog() == true)
             {
-                projectName = saveAsDialog.FileName;
+                ProjectName = saveAsDialog.FileName;
                 SaveProjectAction();
             }
         }
@@ -177,9 +196,10 @@ namespace MVVM.MainView
             };
             if (openFileDialog.ShowDialog() == true)
             {
-                projectName = openFileDialog.FileName;
-                Layers = LayerVM.Load(projectName);
+                ProjectName = openFileDialog.FileName;
+                Layers = LayerVM.Load(ProjectName);
             }
+            GenerateAction();
         }
 
         private void ExportAction()
@@ -188,7 +208,7 @@ namespace MVVM.MainView
             SaveImage();
         }
 
-        private void AddLayerAction()
+        private void AddSolidColorLayerAction()
         {
             StatusText = "Added new solid colour layer.";
             LayerVM newLayer = new LayerVM()
@@ -224,7 +244,23 @@ namespace MVVM.MainView
             layers.Add(newLayer);
             selectedLayer = Layers[layers.Count - 1];
         }
-
+        private void AddnewOwnImageLayerAction()
+        {
+            StatusText = "Added new own image layer.";
+            UploadOwnTextureLayerVM newLayer = new UploadOwnTextureLayerVM()
+            {
+                Name = "New own image layer",
+                ResolutionX = 512,
+                ResolutionY = 512,
+                Opacity = 255,
+                ColorR = 255,
+                ColorG = 255,
+                ColorB = 255
+            };
+            //newLayer.CalculateLayerContent();
+            layers.Add(newLayer);
+            selectedLayer = Layers[layers.Count - 1];
+        }
         private void RemoveSelectedLayerAction()
         {
             StatusText = "Removed selected layer.";
@@ -278,47 +314,7 @@ namespace MVVM.MainView
         #endregion
         #region Noise region
 
-        //private void GenerateWhiteNoise(string seed)
-        //{
-        //    bitmap = Perlin.Noise.GenerateWhiteNoise(resolution, resolution, seed);
 
-        //    for (int x = 0; x < resolution; x++)
-        //    {
-        //        for (int y = 0; y < resolution; y++)
-        //        {
-        //            for (int i = 0; i < 3; i++)
-        //            {
-        //                pixels[x, y, 3] = 255; //3 is alpha channel
-
-        //                pixels[x, y, 0] = (byte)(bitmap[x][y] * 255); //Blue
-        //                pixels[x, y, 1] = (byte)(bitmap[x][y] * 255); //Green
-        //                pixels[x, y, 2] = (byte)(bitmap[x][y] * 255); //Red
-        //            }
-        //        }
-        //    }
-        //}
-
-        //private void GenerateSmoothWhiteNoise(string seed)
-        //{
-        //    bitmap = Perlin.Noise.GenerateWhiteNoise(resolution, resolution, seed);
-        //    bitmap = Perlin.Noise.GenerateSmoothNoise(bitmap, 3);
-
-        //    for (int x = 0; x < resolution; x++)
-        //    {
-        //        for (int y = 0; y < resolution; y++)
-        //        {
-        //            for (int i = 0; i < 3; i++)
-        //            {
-        //                pixels[x, y, 3] = 255; //3 is alpha channel
-
-        //                pixels[x, y, 0] = (byte)(bitmap[x][y] * 255); //Blue
-        //                pixels[x, y, 1] = (byte)(bitmap[x][y] * 255); //Green
-        //                pixels[x, y, 2] = (byte)(bitmap[x][y] * 255); //Red
-        //            }
-        //        }
-        //    }
-        //    UpdateImageRect();
-        //}
         #endregion
         #region Layermath
         private void UpdateImageRect()
@@ -341,67 +337,96 @@ namespace MVVM.MainView
 
         private void CalculateLayers()
         {
-            for (int i = 0; i < layers.Count; i++)
+            LayerVM upperLayer = default;
+            //Go through layers backwards to lay them on top of eachother
+            
+            for (int i = Layers.Count - 1; i > 0; i--)
             {
-                layers[i].CalculateLayerContent();
+                LayerVM currentLayer = layers[i];
+                upperLayer = layers[i - 1];
 
-                switch (layers[i].BlendModeIndex)
+                for (int x = 0; x < Layers[i].Pixels.GetLength(0); x++)
                 {
-                    case 0: //Additive
-                        for (int x = 0; x < layers[i].Pixels.GetLength(0); x++)
-                        {
-                            for (int y = 0; y < layers[i].Pixels.GetLength(1); y++)
-                            {
-                                pixels[x, y, 0] += layers[i].Pixels[x, y, 0];
-                                pixels[x, y, 1] += layers[i].Pixels[x, y, 1];
-                                pixels[x, y, 2] += layers[i].Pixels[x, y, 2];
+                    for (int y = 0; y < Layers[i].Pixels.GetLength(1); y++)
+                    {
+                        System.Drawing.Color currentColor = System.Drawing.Color.FromArgb(
+                            currentLayer.Pixels[x, y, 3],  //alpha
+                            currentLayer.Pixels[x, y, 2],  //red
+                            currentLayer.Pixels[x, y, 1],  //Green
+                            currentLayer.Pixels[x, y, 0]); //blue
 
-                                pixels[x, y, 3] += layers[i].Pixels[x, y, 3];
+                        System.Drawing.Color upperColor = System.Drawing.Color.FromArgb(
+                            upperLayer.Pixels[x, y, 3],  //alpha
+                            upperLayer.Pixels[x, y, 2],  //red
+                            upperLayer.Pixels[x, y, 1],  //Green
+                            upperLayer.Pixels[x, y, 0]); //blue
 
-                                if (pixels[x, y, 0] > 255)
-                                {
-                                    pixels[x, y, 0] = 255;
-                                }
-                                if (pixels[x, y, 1] > 255)
-                                {
-                                    pixels[x, y, 1] = 255;
-                                }
-                                if (pixels[x, y, 2] > 255)
-                                {
-                                    pixels[x, y, 2] = 255;
-                                }
-                                if (pixels[x, y, 2] > 255)
-                                {
-                                    pixels[x, y, 2] = 255;
-                                }
-                                if (pixels[x, y, 3] > 255)
-                                {
-                                    pixels[x, y, 3] = 255;
-                                }
-                            }
-                        }
-                        break;
-                    case 1: //Multiply
-                        for (int x = 0; x < layers.Count; x++)
-                        {
+                        System.Drawing.Color blendedColor = BlendColor(upperColor, currentColor);
 
-                            //for (int y = 0; y < layers.Count; y++)
-                            //{
-                            //    float multiplier = layers[i].Bitmap[x][y] / 255;
-                            //    bitmap[x][y] *= multiplier;
-                            //}
-                        }
+                        upperLayer.Pixels[x, y, 3] = blendedColor.A;
+                        upperLayer.Pixels[x, y, 2] = blendedColor.R;
+                        upperLayer.Pixels[x, y, 1] = blendedColor.G;
+                        upperLayer.Pixels[x, y, 0] = blendedColor.B;
 
-                        break;
-                    default:
-                        break;
+                        //pixels[x, y, 3] = blendedColor.A;
+                        //pixels[x, y, 2] = blendedColor.R;
+                        //pixels[x, y, 1] = blendedColor.G;
+                        //pixels[x, y, 0] = blendedColor.B;
+                    }
                 }
-
-
+                //When at last element of loop
+                if (i == 1)
+                {
+                    pixels = upperLayer.Pixels;
+                }
             }
         }
         #endregion
+        public System.Drawing.Color BlendColor(System.Drawing.Color fg, System.Drawing.Color bg)
+        {
+            //Set color to 0 -> 1 values instead of 0 -> 255
+            double fg_blue =  (double)(fg.B / (double)255);
+            double fg_red =   (double)(fg.R / (double)255);
+            double fg_green = (double)(fg.G / (double)255);
+            double fg_alpha = (double)(fg.A / (double)255);
 
-        
+            double bg_blue =  (double)(bg.B / (double)255);
+            double bg_red =   (double)(bg.R / (double)255);
+            double bg_green = (double)(bg.G / (double)255);
+            double bg_alpha = (double)(bg.A / (double)255);
+
+            double al = 1 - (1 - fg_alpha) * (1 - bg_alpha);
+
+            System.Drawing.Color r = System.Drawing.Color.FromArgb(0, 0, 0, 0);
+
+            //Check whether or not it's fully transparent
+            if ((double)(al) < 1.0e-6) 
+            {
+                return r;
+            }
+
+            //The math accelarates
+            double red =    fg_red   * fg_alpha / al + bg_red   * bg_alpha * (1 - fg_alpha) / al;
+            double green =  fg_green * fg_alpha / al + bg_green * bg_alpha * (1 - fg_alpha) / al;
+            double blue =   fg_blue  * fg_alpha / al + bg_blue  * bg_alpha * (1 - fg_alpha) / al;
+
+            //Set color to 0 -> 255 again
+            int redoutput =   (int)(red * 255);
+            int greenoutput = (int)(green * 255);
+            int blueoutput =  (int)(blue * 255);
+
+
+            r = System.Drawing.Color.FromArgb(
+                (int)(al * 255),
+                (int)(red * 255),
+                (int)(green * 255),
+                (int)(blue * 255)
+                );
+
+            return r;
+        }
     }
 }
+
+
+
