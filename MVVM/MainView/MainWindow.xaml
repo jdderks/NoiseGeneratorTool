@@ -98,7 +98,7 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Text="Auto refresh" Grid.Column="1" VerticalAlignment="Center"/>
-                        <CheckBox Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <CheckBox IsEnabled="false" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <Button Width="80"  Content="Refresh" Command="{Binding GenerateCommand}" Grid.Column="2" VerticalAlignment="Center"/>
                     </Grid>
                 </Grid>

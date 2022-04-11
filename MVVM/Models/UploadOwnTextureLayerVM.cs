@@ -18,29 +18,28 @@ namespace MVVM.Models
     {
         #region properties
         public ICommand SetBitMapAsOwnImageCommand { get; }
-        
+
         #endregion
         public UploadOwnTextureLayerVM()
         {
+            Pixels = new byte[512, 512, 4];
             SetBitMapAsOwnImageCommand = new Command(SetBitMapAsImageAction);
         }
 
         private void SetBitMapAsImageAction()
         {
-            var newDialog = new OpenFileDialog() 
+            var newDialog = new OpenFileDialog()
             {
                 Filter = "Png Files ( *.png)|*.png"
-            }; 
+            };
             if (newDialog.ShowDialog() == true)
             {
-                Stream imageStreamSource = new FileStream(newDialog.FileName,FileMode.Open,FileAccess.Read,FileShare.Read);
-                PngBitmapDecoder decoder = new PngBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat,BitmapCacheOption.Default);
+                Stream imageStreamSource = new FileStream(newDialog.FileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                PngBitmapDecoder decoder = new PngBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
                 BitmapSource bitmapSource = decoder.Frames[0];
 
                 ResolutionX = (int)bitmapSource.PixelWidth;
                 ResolutionY = (int)bitmapSource.PixelHeight;
-
-                Pixels = new byte[ResolutionX, ResolutionX, 4];
 
                 int stride = bitmapSource.PixelWidth * 4;
                 int size = bitmapSource.PixelHeight * stride;
@@ -51,12 +50,14 @@ namespace MVVM.Models
                 {
                     for (int y = 0; y < bitmapSource.PixelHeight; y++)
                     {
-                        
+                        int width = Pixels.GetLength(0);
+                        int height = Pixels.GetLength(0);
+                       
                         int index = y * stride + 4 * x;
-                        Pixels[x, y, 0] = pixels[index];
-                        Pixels[x, y, 1] = pixels[index + 1]; //Blue
-                        Pixels[x, y, 2] = pixels[index + 2]; //Green
-                        Pixels[x, y, 3] = pixels[index + 3]; //Red
+                        Pixels[x, y, 0] = pixels[index]; //Blue
+                        Pixels[x, y, 1] = pixels[index + 1]; //Green
+                        Pixels[x, y, 2] = pixels[index + 2]; //Red
+                        Pixels[x, y, 3] = Opacity; //Alpha
 
                     }
                 }

@@ -355,7 +355,7 @@ namespace MVVM.MainView
                             currentLayer.Pixels[x, y, 1],  //Green
                             currentLayer.Pixels[x, y, 0]); //blue
 
-                        System.Drawing.Color upperColor = System.Drawing.Color.FromArgb(
+                            System.Drawing.Color upperColor = System.Drawing.Color.FromArgb(
                             upperLayer.Pixels[x, y, 3],  //alpha
                             upperLayer.Pixels[x, y, 2],  //red
                             upperLayer.Pixels[x, y, 1],  //Green
