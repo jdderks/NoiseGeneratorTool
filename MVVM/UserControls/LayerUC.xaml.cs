@@ -22,8 +22,5 @@ namespace MVVM.UserControls
         {
             InitializeComponent();
         }
-
-
-
     }
 }

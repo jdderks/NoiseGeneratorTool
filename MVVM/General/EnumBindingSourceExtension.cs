@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Markup;
 
-//EnumBindingSourceExension by Brian Lagunas
+//EnumBindingSourceExtention by Brian Lagunas
 //Link to used tutorial: https://youtu.be/Bp5LFXjwtQ0
 
 namespace MVVM.MainView

@@ -37,10 +37,10 @@ namespace MVVM.Models
         public override void CalculateLayerContent()
         {
             Pixels = new byte[ResolutionX, ResolutionY, 4];
-            GenerateSmoothWhiteNoise(seed.ToString());
+            GenerateNoise(seed.ToString());
         }
 
-        private void GenerateSmoothWhiteNoise(string seed)
+        private void GenerateNoise(string seed)
         {
             Bitmap = Perlin.Noise.GenerateWhiteNoise(ResolutionX, ResolutionY, seed);
             if (isSmoothed)

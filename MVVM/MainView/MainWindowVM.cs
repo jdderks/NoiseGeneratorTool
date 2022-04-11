@@ -19,34 +19,20 @@ using System.Xml.Serialization;
 
 namespace MVVM.MainView
 {
-    #region GenerationModesEnum
-    enum GenerationModes
-    {
-        WhiteNoise = 0,
-        SmoothedNoise = 1,
-        PerlinNoise = 2
-    }
-    #endregion
 
     class MainWindowVM : ViewModel
     {
         private WriteableBitmap img;
         private byte[,,] pixels;
-        float[][] bitmap;
         private int resolution = 512;
         private string projectName;
         //private int _selectedGenerationMode;
 
         private string statusText;
-
-        static MainWindowVM()
-        {
-            AvailableGenerationModes = new List<string>(Enum.GetNames(typeof(GenerationModes)));
-        }
-
-        public static List<string> AvailableGenerationModes { get; }
         public ObservableCollection<LayerVM> layers; // = new ObservableCollection<Layer>();
         public LayerVM selectedLayer;
+
+
 
         #region Properties
         //public GenerationModes mode { get; } = GenerationModes.WhiteNoise;
@@ -145,15 +131,6 @@ namespace MVVM.MainView
         }
         #endregion
         #region Actions
-        private void SetModeAction()
-        {
-
-        }
-
-        private void ConfigAction()
-        {
-
-        }
 
         private void ExitAction()
         {
@@ -312,10 +289,7 @@ namespace MVVM.MainView
             return bmImage;
         }
         #endregion
-        #region Noise region
 
-
-        #endregion
         #region Layermath
         private void UpdateImageRect()
         {
