@@ -19,7 +19,6 @@ using System.Xml.Serialization;
 
 namespace MVVM.MainView
 {
-
     class MainWindowVM : ViewModel
     {
         private WriteableBitmap img;
@@ -106,6 +105,9 @@ namespace MVVM.MainView
         public ICommand AddNewSmoothNoiseLayerCommand { get; }
         public ICommand AddNewOwnImageLayerCommand { get; }
         public ICommand RemoveLayerCommand { get; }
+        public ICommand LayerUpCommand { get; }
+        public ICommand LayerDownCommand { get; }
+
         #endregion
         #region Constructor
         public MainWindowVM()
@@ -126,6 +128,8 @@ namespace MVVM.MainView
             AddNewSmoothNoiseLayerCommand = new Command(AddSmoothLayerAction);
             AddNewOwnImageLayerCommand = new Command(AddnewOwnImageLayerAction);
             RemoveLayerCommand = new Command(RemoveSelectedLayerAction);
+            LayerUpCommand = new Command(LayerUpAction);
+            LayerDownCommand = new Command(LayerDownAction);
 
             GenerateAction();
         }
@@ -309,11 +313,35 @@ namespace MVVM.MainView
             DisplayImage.WritePixels(rect, pixels1d, stride, 0);
         }
 
+        private void LayerDownAction()
+        {
+            int selectedIndex = Layers.IndexOf(selectedLayer);
+            int layerUpIndex = selectedIndex++;
+
+
+            if (layerUpIndex < layers.Count - 1)
+            {
+                Layers.Move(selectedIndex, layerUpIndex);
+            }
+        }
+
+        private void LayerUpAction()
+        {
+            int selectedIndex = Layers.IndexOf(selectedLayer);
+            int layerDownIndex = selectedIndex--;
+
+            if (layerDownIndex > 0)
+            {
+                Layers.Move(selectedIndex, layerDownIndex);
+            }
+        }
+
+
         private void CalculateLayers()
         {
             LayerVM upperLayer = default;
             //Go through layers backwards to lay them on top of eachother
-            
+
             for (int i = Layers.Count - 1; i > 0; i--)
             {
                 LayerVM currentLayer = layers[i];
@@ -329,23 +357,18 @@ namespace MVVM.MainView
                             currentLayer.Pixels[x, y, 1],  //Green
                             currentLayer.Pixels[x, y, 0]); //blue
 
-                            System.Drawing.Color upperColor = System.Drawing.Color.FromArgb(
-                            upperLayer.Pixels[x, y, 3],  //alpha
-                            upperLayer.Pixels[x, y, 2],  //red
-                            upperLayer.Pixels[x, y, 1],  //Green
-                            upperLayer.Pixels[x, y, 0]); //blue
+                        System.Drawing.Color upperColor = System.Drawing.Color.FromArgb(
+                        upperLayer.Pixels[x, y, 3],  //alpha
+                        upperLayer.Pixels[x, y, 2],  //red
+                        upperLayer.Pixels[x, y, 1],  //Green
+                        upperLayer.Pixels[x, y, 0]); //blue
 
-                        System.Drawing.Color blendedColor = BlendColor(upperColor, currentColor);
+                        System.Drawing.Color blendedColor = AlphaBlendColours(upperColor, currentColor);
 
                         upperLayer.Pixels[x, y, 3] = blendedColor.A;
                         upperLayer.Pixels[x, y, 2] = blendedColor.R;
                         upperLayer.Pixels[x, y, 1] = blendedColor.G;
                         upperLayer.Pixels[x, y, 0] = blendedColor.B;
-
-                        //pixels[x, y, 3] = blendedColor.A;
-                        //pixels[x, y, 2] = blendedColor.R;
-                        //pixels[x, y, 1] = blendedColor.G;
-                        //pixels[x, y, 0] = blendedColor.B;
                     }
                 }
                 //When at last element of loop
@@ -356,16 +379,16 @@ namespace MVVM.MainView
             }
         }
         #endregion
-        public System.Drawing.Color BlendColor(System.Drawing.Color fg, System.Drawing.Color bg)
+        public System.Drawing.Color AlphaBlendColours(System.Drawing.Color fg, System.Drawing.Color bg)
         {
             //Set color to 0 -> 1 values instead of 0 -> 255
-            double fg_blue =  (double)(fg.B / (double)255);
-            double fg_red =   (double)(fg.R / (double)255);
+            double fg_blue = (double)(fg.B / (double)255);
+            double fg_red = (double)(fg.R / (double)255);
             double fg_green = (double)(fg.G / (double)255);
             double fg_alpha = (double)(fg.A / (double)255);
 
-            double bg_blue =  (double)(bg.B / (double)255);
-            double bg_red =   (double)(bg.R / (double)255);
+            double bg_blue = (double)(bg.B / (double)255);
+            double bg_red = (double)(bg.R / (double)255);
             double bg_green = (double)(bg.G / (double)255);
             double bg_alpha = (double)(bg.A / (double)255);
 
@@ -374,20 +397,20 @@ namespace MVVM.MainView
             System.Drawing.Color r = System.Drawing.Color.FromArgb(0, 0, 0, 0);
 
             //Check whether or not it's fully transparent
-            if ((double)(al) < 1.0e-6) 
+            if ((double)(al) < 1.0e-6)
             {
                 return r;
             }
 
             //The math accelarates
-            double red =    fg_red   * fg_alpha / al + bg_red   * bg_alpha * (1 - fg_alpha) / al;
-            double green =  fg_green * fg_alpha / al + bg_green * bg_alpha * (1 - fg_alpha) / al;
-            double blue =   fg_blue  * fg_alpha / al + bg_blue  * bg_alpha * (1 - fg_alpha) / al;
+            double red = fg_red * fg_alpha / al + bg_red * bg_alpha * (1 - fg_alpha) / al;
+            double green = fg_green * fg_alpha / al + bg_green * bg_alpha * (1 - fg_alpha) / al;
+            double blue = fg_blue * fg_alpha / al + bg_blue * bg_alpha * (1 - fg_alpha) / al;
 
             //Set color to 0 -> 255 again
-            int redoutput =   (int)(red * 255);
+            int redoutput = (int)(red * 255);
             int greenoutput = (int)(green * 255);
-            int blueoutput =  (int)(blue * 255);
+            int blueoutput = (int)(blue * 255);
 
 
             r = System.Drawing.Color.FromArgb(

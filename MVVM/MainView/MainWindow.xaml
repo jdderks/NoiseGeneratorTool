@@ -130,6 +130,8 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
 
+  
+
                     <Menu Grid.Row="2">
                         <MenuItem Header="Select new layer type" Width="200" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" FlowDirection="LeftToRight">
                             <MenuItem Header="Solid colour" Command="{Binding AddNewLayerCommand}"/>
@@ -137,9 +139,17 @@
                             <MenuItem Header="OwnImage" Command="{Binding AddNewOwnImageLayerCommand}"/>
                         </MenuItem>
                     </Menu>
-
-                    <Button Content="Remove selected layer" Grid.Row="3" 
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Content="↑"  Grid.Column="0" Command="{Binding LayerUpCommand}"/>
+                        <Button Content="↓"  Grid.Column="1" Command="{Binding LayerDownCommand}"/>
+                        <Button Content="Remove selected layer" Grid.Column="3" 
                             Command="{Binding RemoveLayerCommand}"/>
+                    </Grid>
                 </Grid>
             </Border>
 

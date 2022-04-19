@@ -52,7 +52,6 @@ namespace MVVM.Models
             {
                 for (int y = 0; y < ResolutionY; y++)
                 {
-
                     Pixels[x, y, 0] = Math.Clamp((byte)(Bitmap[x][y] * 255), (byte)0, ColorB); //Blue
                     Pixels[x, y, 1] = Math.Clamp((byte)(Bitmap[x][y] * 255), (byte)0, ColorG); //Green
                     Pixels[x, y, 2] = Math.Clamp((byte)(Bitmap[x][y] * 255), (byte)0, ColorR); //Red
